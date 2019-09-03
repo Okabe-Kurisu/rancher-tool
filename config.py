@@ -7,8 +7,8 @@ config = {
     'proxies': {'http': 'http://localhost:1081', 'https': 'http://localhost:1081'},
     # docker retry time
     'docker_retry_times': 3,
-    # download icon retry times
-    'icon_retry_times': 3,
+    # download file retry times
+    'download_retry_times': 3,
 
     # file path
     'path': "./pkg/",

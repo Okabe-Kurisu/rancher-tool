@@ -5,7 +5,7 @@
 import os
 import requests
 import yaml
-from requests import ReadTimeout
+from utils.request import auto_retry_request
 
 from utils import fakeUA
 from yaml import Loader, Dumper
@@ -18,11 +18,6 @@ def get_icon(chart_name_str, pkg_name_str):
     print("downloading " + pkg_name_str + "'s logo")
     with open(chart_name_str, encoding='utf-8') as chart:
         chart_yaml = yaml.load(stream=chart, Loader=Loader)
-
-        headers = {
-            'u]ser-agent': fakeUA.random_UA()
-        }
-
         img_url = chart_yaml.get("icon")
 
         if not img_url:
@@ -37,12 +32,13 @@ def get_icon(chart_name_str, pkg_name_str):
             print("this logo has already exist, pass it")
             return
 
+        headers = {
+            'u]ser-agent': fakeUA.random_UA()
+        }
         print("trying to download logo from:" + img_url)
-        try:
-            img_response = requests.get(img_url, headers=headers, timeout=5)
-        except ReadTimeout:
-            img_response = retry_img_download(img_url)
-        if img_response and img_response.status_code is 200 and img_response.headers['Content-Type'] != "text/html; charset=utf-8":
+        img_response = auto_retry_request(img_url, headers=headers, timeout=5, retry_time=3)
+
+        if img_response.headers['Content-Type'] != "text/html; charset=utf-8":
             icon_name = "/icon." + img_url.split(".")[-1]
             with open(pkg_name_str + icon_name, "wb") as f:
                 f.write(img_response.content)
