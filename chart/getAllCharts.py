@@ -28,15 +28,22 @@ def get_all_tgz():
         lines = tar_list.readlines()
         for line in lines:
             line = line.replace("\n", "")
-            print("downloading " + line)
-            res = auto_retry_get(line)
+            print("downloading " + file_name)
             file_name = line.split("/")[-1]
+
+            # if tar exist, continue
+            if os.path.isfile(config['path'] + file_name):
+                continue
+
+            res = auto_retry_get(line)
             if not res or res.headers['content-type'] != 'application/x-tar':
+                print('download ' + file_name + ' is fail')
                 with open('out/failDownloadChart.txt', 'a') as file:
                     file.write(line)
+                continue
             with open(config['path'] + file_name, 'wb') as file:
                 file.write(res.content)
-            print('download ' + file_name + ' complete')
+                print('download ' + file_name + ' is completed')
 
 
 if __name__ == '__main__':
