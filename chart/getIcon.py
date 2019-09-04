@@ -52,30 +52,6 @@ def get_icon(chart_name_str, chart_path_str):
             no_icon_list.append(chart_path_str)
 
 
-def retry_img_download(img_url_str):
-    headers = {
-        'user-agent': fakeUA.random_UA()
-    }
-    for x in range(config['icon_retry_times']):
-        try:
-            print("retry " + str(x + 1) + " times")
-            img_response = requests.get(img_url_str, headers=headers, timeout=5)
-            if img_response.status_code == 200:
-                return img_response
-        except:
-            pass
-    print('trying to use proxies')
-    for x in range(config['icon_retry_times']):
-        try:
-            print("retry " + str(x + 1) + " times")
-            img_response = requests.get(img_url_str, headers=headers, timeout=5, proxies=config['proxies'])
-            if img_response.status_code == 200:
-                return img_response
-        except:
-            pass
-    return None
-
-
 def find_all_chart():
     print("-----------start downloading icon ---------------")
     for file_name in os.listdir(config['path']):
