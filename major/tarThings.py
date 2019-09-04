@@ -62,10 +62,13 @@ def format_pkg(pkg_name_str, name_str):
 
 
 def find_and_un_tar():
+    print("-----------start unpack tar or tgz ---------------")
     for file_name in os.listdir(config['path']):
         # if it not a tar file, ignore it
-        if not (file_name.endswith("tgz") or file_name.endswith("tar")) or os.path.isdir(file_name):
+        if not (file_name.endswith("tgz") or file_name.endswith("tar")) \
+                or os.path.isdir(config['path'] + file_name):
             continue
+        print(file_name)
         un_tar(config['path'] + file_name)
 
 

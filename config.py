@@ -4,7 +4,7 @@
 # @Software: PyCharm
 config = {
     # http and https proxies
-    'proxies': {'http': 'http://localhost:1081', 'https': 'http://localhost:1081'},
+    'proxies': {'http': 'http://127.0.0.1:1081', 'https': 'http://127.0.0.1:1081'},
     # docker retry time
     'docker_retry_times': 3,
     # download file retry times

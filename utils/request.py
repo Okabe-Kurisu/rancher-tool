@@ -5,34 +5,40 @@
 # @File    : request.py
 # @Software: PyCharm
 import requests
-from requests import ReadTimeout
 from config import config
 
 
-def auto_retry_request(url_str, headers=None, timeout=5, retry_time=config['download_retry_times']):
+def auto_retry_get(url_str, headers=None, timeout=5, retry_time=config['download_retry_times'],
+                   proxies=config['proxies']):
     """
     auto download and retry when timeout
 
-    FIXME: rebuild this code beauty
-
+    :param proxies:
     :param url_str:
     :param headers:
     :param timeout:
     :param retry_time:
     :return:
     """
+    if not retry_time:
+        return None
+    response = None
     try:
-        return requests.get(url_str, headers=headers, timeout=timeout)
-    except ReadTimeout:
-        for x in range(retry_time * 2):
-            try:
-                if x is retry_time:
-                    print('trying to use proxies')
-                print("retry " + str(x + 1 - (0 if x < retry_time else retry_time)) + " times")
-                response = requests.get(url_str, headers=headers, timeout=timeout,
-                                        proxies=None if x < retry_time else config['proxies'])
-                if response.status_code == 200:
-                    return response
-            except:
-                pass
-    return None
+        if proxies:
+            response = requests.get(url_str, headers=headers, timeout=timeout, proxies=proxies)
+        else:
+            response = requests.get(url_str, headers=headers, timeout=timeout)
+        assert 200 <= response.status_code <= 300
+        return response
+    except Exception as e:
+        with open("out/requestFail.txt", 'a') as file:
+            file.write("---------------\n")
+            file.write(url_str + " :\n")
+            file.write(str(e) + '\n')
+            if response:
+                file.write(str(response) + '\n')
+        print("get request about {0} is fail, retrying".format(url_str))
+        # if retry_time is 1 and proxies:
+        #     return auto_retry_get(url_str, headers=headers, timeout=timeout, retry_time=config['download_retry_times'],
+        #                           proxies=None)
+        return auto_retry_get(url_str, headers=headers, timeout=timeout, retry_time=retry_time - 1)
