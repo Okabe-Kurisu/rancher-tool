@@ -28,11 +28,12 @@ def get_all_tgz():
         lines = tar_list.readlines()
         for line in lines:
             line = line.replace("\n", "")
-            print("downloading " + file_name)
             file_name = line.split("/")[-1]
+            print("downloading " + file_name)
 
             # if tar exist, continue
             if os.path.isfile(config['path'] + file_name):
+                print(file_name + ' is exist, pass it')
                 continue
 
             res = auto_retry_get(line)
