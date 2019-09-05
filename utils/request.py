@@ -8,7 +8,7 @@ import requests
 from config import config
 
 
-def auto_retry_get(url_str, headers=None, timeout=5, retry_time=config['download_retry_times'],
+def auto_retry_get(url_str, headers=None, timeout=10, retry_time=config['download_retry_times'],
                    proxies=config['proxies']):
     """
     auto download and retry when timeout
