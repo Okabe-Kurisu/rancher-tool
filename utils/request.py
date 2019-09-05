@@ -29,7 +29,7 @@ def auto_retry_get(url_str, headers=None, timeout=5, retry_time=config['download
                 file.write(url_str)
         with open("out/domainList.txt", 'r+') as file:
             lines = set(file.readlines())
-            url_str = url_str.split("/")[2] + "\n"
+            url_str = '25.6.204.3 ' + url_str.split("/")[2] + "\n"
             if url_str not in lines:
                 file.write(url_str)
         return None
