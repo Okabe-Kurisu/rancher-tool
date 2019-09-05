@@ -3,7 +3,6 @@
 # @Author  : Xie Chuyu
 # @Software: PyCharm
 import os
-import requests
 import yaml
 from utils.request import auto_retry_get
 

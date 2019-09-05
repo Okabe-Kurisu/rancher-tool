@@ -41,9 +41,9 @@ def auto_retry_get(url_str, headers=None, timeout=10, retry_time=config['downloa
         return None
     try:
         if proxies:
-            response = requests.get(url_str, headers=headers, timeout=timeout, proxies=proxies)
+            response = requests.get(url_str, headers=headers, timeout=timeout, verify=False, proxies=proxies)
         else:
-            response = requests.get(url_str, headers=headers, timeout=timeout)
+            response = requests.get(url_str, headers=headers, timeout=timeout, verify=False)
         assert 200 <= response.status_code <= 300
         return response
     except Exception as e:
