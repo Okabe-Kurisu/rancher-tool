@@ -22,17 +22,16 @@ def auto_retry_get(url_str, headers=None, timeout=5, retry_time=config['download
     """
 
     if not retry_time:
-        with open("out/requestFail.txt", 'a+') as file:
+        with open("out/requestFail.txt", 'r+') as file:
             lines = set(file.readlines())
             url_str = url_str + "\n"
             if url_str not in lines:
                 file.write(url_str)
-        with open("out/domainList.txt", 'a+') as file:
+        with open("out/domainList.txt", 'r+') as file:
             lines = set(file.readlines())
-            url_str = url_str.split("/")[2]
-            line = url_str + "\n"
-            if line not in lines:
-                file.write(line)
+            url_str = url_str.split("/")[2] + "\n"
+            if url_str not in lines:
+                file.write(url_str)
         return None
     try:
         if proxies:

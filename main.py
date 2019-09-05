@@ -14,20 +14,21 @@ def init():
 
     :return:
     """
-    print('initializing env(mean make 2 dir')
+    print('initializing env')
     if not os.path.isdir('out'):
         os.mkdir('out')
     if not os.path.isdir(config['path']):
         os.mkdir(config['path'])
+    if not os.path.isfile('out/domainList.txt') or not os.path.isfile('out/requestFail.txt'):
+        open('out/domainList.txt', 'w')
+        open('out/requestFail.txt', 'w')
 
-
-# todo add function to fix the wrong tag in harbor
 
 if __name__ == '__main__':
     init()
     # getAllCharts.get_all_tgz_url()
     # getAllCharts.get_all_tgz()
-    tarThings.find_and_un_tar()
+    # tarThings.find_and_un_tar()
     getIcon.find_all_chart()
     getImages.list_all_image()
     dockerThings.pull_and_push_all()
