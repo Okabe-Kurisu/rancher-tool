@@ -22,7 +22,7 @@ def get_icon(chart_name_str, chart_path_str):
         img_url = chart_yaml.get("icon")
 
         if not img_url:
-            if chart_path_str not in no_icon_dict and no_icon_dict[chart_path_str] is not 0:
+            if chart_path_str not in no_icon_dict or no_icon_dict[chart_path_str] is not 0:
                 no_icon_dict[chart_name_str] = 1
                 return
         # github's icon cannot get from the url
@@ -44,10 +44,11 @@ def get_icon(chart_name_str, chart_path_str):
             icon_name = "/icon." + img_url.split(".")[-1]
             with open(chart_path_str + icon_name, "wb") as f:
                 f.write(img_response.content)
-            with open(chart_name_str, 'w', encoding="utf-8") as chart:
+
+            with open(chart_name_str, 'w', encoding="utf-8") as chart_file:
                 # make yaml's icon from web url to local url
                 chart_yaml['icon'] = "file://../icon.png"
-                yaml.dump(chart_yaml, chart, Dumper)
+                yaml.dump(chart_yaml, chart_file, Dumper)
             no_icon_dict[chart_name_str] = 0
             print(chart_path_str + "'s logo has been downloaded already")
         else:
