@@ -106,7 +106,7 @@ class Harbor(object):
         :return:
         """
 
-        response = requests.get(url, verify=False, headers=self.json_headers)
+        response = self.session.get(url, verify=False, headers=self.json_headers)
         if response.status_code == 401:
             self.login_harbor()
             return self._get_with_auth(url)
@@ -120,7 +120,7 @@ class Harbor(object):
         :return:
         """
 
-        response = requests.post(url, verify=False, headers=self.json_headers, data=data)
+        response = self.session.post(url, verify=False, headers=self.json_headers, data=data)
         print(response.status_code)
         if response.status_code == 401:
             self.login_harbor()
@@ -144,7 +144,7 @@ class Harbor(object):
 
         repository_name, tag = origin_name_str.split(':')[0], origin_name_str.split(':')[1]
         delete_url = "{0}repositories/{1}/tags/{2}".format(self.base_url, repository_name, tag)
-        requests.delete(delete_url, verify=False, headers=self.json_headers)
+        self.session.delete(delete_url, verify=False, headers=self.json_headers)
 
     def decorticate(self, project_name_str):
         """
