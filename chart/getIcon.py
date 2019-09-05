@@ -31,14 +31,18 @@ def get_icon(chart_name_str, chart_path_str):
         img_url = img_url \
             .replace('/blob/', '/raw/')
     # if this logo is exist, pass it
-    elif img_url == "file://../icon.png":
+    elif img_url.startswith('file://'):
         print("this logo has already exist, pass it")
         return
 
     headers = {
         'user-agent': fakeUA.random_UA()
     }
-    icon_name = "/icon." + img_url.split(".")[-1]
+    ext_name = img_url.split(".")[-1]
+    if len(ext_name) < 5:
+        icon_name = "/icon." + ext_name
+    else:
+        icon_name = "/icon.png"
 
     # if logo has been download once or download success, make chart.yaml icon locally. if download fail, return
     if not os.path.exists(chart_path_str + icon_name):
@@ -59,7 +63,7 @@ def get_icon(chart_name_str, chart_path_str):
 
     with open(chart_name_str, 'w', encoding="utf-8") as file:
         # make yaml's icon from web url to local url
-        chart_yaml['icon'] = "file://../icon.png"
+        chart_yaml['icon'] = "file://.." + icon_name
         yaml.dump(chart_yaml, file, Dumper)
 
 
