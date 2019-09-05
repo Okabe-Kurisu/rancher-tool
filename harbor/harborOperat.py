@@ -107,7 +107,6 @@ class Harbor(object):
         """
 
         response = requests.get(url, verify=False, headers=self.json_headers)
-        print(response.status_code)
         if response.status_code == 401:
             self.login_harbor()
             return self._get_with_auth(url)
@@ -122,9 +121,10 @@ class Harbor(object):
         """
 
         response = requests.post(url, verify=False, headers=self.json_headers, data=data)
+        print(response.status_code)
         if response.status_code == 401:
             self.login_harbor()
-            return self._post_with_auth(url)
+            return self._post_with_auth(url, data=data)
         return response
 
     def mv_image(self, origin_name_str, target_name_str):
