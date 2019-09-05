@@ -109,6 +109,7 @@ class Harbor(object):
             self._login_harbor()
             return self._get_with_auth(url)
         print(url)
+        print(response.content)
         return response
 
     def mv_image(self, origin_name_str, target_name_str):
