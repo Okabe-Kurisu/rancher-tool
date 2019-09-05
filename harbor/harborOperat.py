@@ -96,7 +96,7 @@ class Harbor(object):
         self._pre_push(project_name)
         return config['harbor_url'] + "/" + project_name
 
-    def _get_with_auth(self, url, data=None):
+    def _get_with_auth(self, url):
         """
         make sure get request has auth
 
@@ -104,8 +104,8 @@ class Harbor(object):
         :return:
         """
 
-        response = requests.get(url, verify=False, headers=self.json_headers, data=data)
-        if response == 401:
+        response = requests.get(url, verify=False, headers=self.json_headers)
+        if response.status_code == 401:
             self._login_harbor()
             return self._get_with_auth(url)
         return response
@@ -119,9 +119,9 @@ class Harbor(object):
         """
 
         response = requests.post(url, verify=False, headers=self.json_headers, data=data)
-        if response == 401:
+        if response.status_code == 401:
             self._login_harbor()
-            return self._get_with_auth(url)
+            return self._post_with_auth(url)
         return response
 
     def mv_image(self, origin_name_str, target_name_str):
