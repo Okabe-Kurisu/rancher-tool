@@ -29,7 +29,7 @@ class Harbor(object):
             'password': config['harbor_password'],
         }
         res = self.session.post(url=login_url, data=data, verify=False,
-                                headers={"Content-Type": 'application/x-www-form-urlencoded; charset=UTF-8'})
+                                headers={"Content-Type": "application/x-www-form-urlencoded"})
 
         print(login_url)
         print(res.status_code)
