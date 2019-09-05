@@ -27,23 +27,20 @@ def un_tar(file_name_str):
     tar_obj = tarfile.open(file_name_str)
     # split the name and version
     file_name_split = file_name_str.split("-")
-    _name, _version = "-".join(file_name_split[:-1]), ".".join(file_name_split[-1].split(".")[:-1])
-    if not _version.replace('.', '').isdigit():
-        print("!!!!!!!!!!!!!!!!", _name, _version)
-        _name = "-".join(file_name_str.split("-")[:-2])
-        _version = file_name_split[-2] + '-' + _version
-    else:
-        print("+++++++++++", _name, _version)
-    _pkg_name = _name + "/" + _version
+    name, version = "-".join(file_name_split[:-1]), ".".join(file_name_split[-1].split(".")[:-1])
+    if not version.replace('.', '').isdigit() and not version.startswith('v'):
+        name = "-".join(file_name_str.split("-")[:-2])
+        version = file_name_split[-2] + '-' + version
+    _pkg_name = name + "/" + version
 
-    if not os.path.isdir(_name):
-        os.mkdir(_name)
+    if not os.path.isdir(name):
+        os.mkdir(name)
     if not os.path.isdir(_pkg_name):
         os.mkdir(_pkg_name)
     for name in tar_obj.getnames():
         tar_obj.extract(name, _pkg_name + "/")
     tar_obj.close()
-    format_pkg(_pkg_name, _name.replace(config['path'], ''))
+    format_pkg(_pkg_name, name.replace(config['path'], ''))
     print(file_name_str + " has been untared already")
 
 

@@ -13,6 +13,7 @@ def get_all_tgz_url():
     print('downloading all tgz list')
     with open('out/tar.yaml', 'wb') as file:
         response = auto_retry_get('https://kubernetes-charts.storage.googleapis.com/index.yaml')
+        assert response
         file.write(response.content)
     res = os.popen('cat out/tar.yaml | grep -o "http.*.tgz"')
     lines = res.readlines()
