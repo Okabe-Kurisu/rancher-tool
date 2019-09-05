@@ -70,7 +70,7 @@ class Harbor(object):
         })
         res = self._get_with_auth(create_project_url, data=data)
 
-        assert res.status_code is 201, 'create project failed ' + str(res.status_code)
+        assert 300 > res.status_code >= 200, 'create project failed ' + str(res.status_code)
         print('create project success')
 
     def push(self, name_str):
@@ -119,6 +119,7 @@ class Harbor(object):
         :return:
         """
 
+        print("move {0} to {1}".format(origin_name_str, target_name_str))
         image = self.client.images.pull(config['harbor_url'] + "/" + origin_name_str)
         image_name = self.push(target_name_str)
         image.tag(image_name)
@@ -149,3 +150,12 @@ class Harbor(object):
 
         repositories_url = "{0}repositories?project_id={1}"
         repositories_response = self._get_with_auth(repositories_url)
+        repositories = repositories_response.json(encoding='utf-8')
+        wait_to_decorticate = [x['name'] for x in repositories if len(x['name'].split('/')) > 1]
+        for x in wait_to_decorticate:
+            origin = project_name_str + '/' + x['name']
+            target = '/'.join(x['name'].split('/')[:-2])
+            self.mv_image(origin, target)
+
+    def gen_test_usage(self, project_name_str):
+        image = self.client.images.pull('nginx')

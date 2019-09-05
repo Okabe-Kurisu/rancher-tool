@@ -45,7 +45,7 @@ def pull(image_name, retry_time=config['docker_retry_times']):
     try:
         return client.images.pull(image_name)
     except ImageNotFound:
-        with open("out/dockerDomainList.txt", 'r+') as file:
+        with open("out/dockerDomainList.txt", 'w') as file:
             lines = set(file.readlines())
             line = '25.6.204.3 ' + image_name.split("/")[0] + "\n"
             if line not in lines:
