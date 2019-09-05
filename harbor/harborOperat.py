@@ -60,7 +60,7 @@ class Harbor(object):
         if self._check_project(project_name_str):
             return
 
-        print('trying to create project' + project_name_str)
+        print('trying to create project ' + project_name_str)
         create_project_url = self.base_url + "projects"
         data = json.dumps({
             "project_name": project_name_str,
@@ -148,14 +148,15 @@ class Harbor(object):
                     project_id = project['project_id']
         assert project_id, 'project is not exist'
 
-        repositories_url = "{0}repositories?project_id={1}"
+        repositories_url = "{0}repositories?project_id={1}".format(self.base_url, project_id)
         repositories_response = self._get_with_auth(repositories_url)
         repositories = repositories_response.json(encoding='utf-8')
         wait_to_decorticate = [x['name'] for x in repositories if len(x['name'].split('/')) > 1]
         for x in wait_to_decorticate:
-            origin = project_name_str + '/' + x['name']
-            target = '/'.join(x['name'].split('/')[:-2])
-            self.mv_image(origin, target)
+            target = '/'.join(x.split('/')[:-2])
+            self.mv_image(x, target)
 
-    def gen_test_usage(self, project_name_str):
-        image = self.client.images.pull('nginx')
+
+if __name__ == '__main__':
+    harbor = Harbor()
+    harbor.decorticate('kibana')
