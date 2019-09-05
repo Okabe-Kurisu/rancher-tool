@@ -21,8 +21,9 @@ def auto_retry_get(url_str, headers=None, timeout=5, retry_time=config['download
     :return:
     """
     if not retry_time:
+        with open("out/requestFail.txt", 'a') as file:
+            file.write(url_str + " :\n")
         return None
-    response = None
     try:
         if proxies:
             response = requests.get(url_str, headers=headers, timeout=timeout, proxies=proxies)
@@ -31,12 +32,6 @@ def auto_retry_get(url_str, headers=None, timeout=5, retry_time=config['download
         assert 200 <= response.status_code <= 300
         return response
     except Exception as e:
-        with open("out/requestFail.txt", 'a') as file:
-            file.write("---------------\n")
-            file.write(url_str + " :\n")
-            file.write(str(e) + '\n')
-            if response:
-                file.write(str(response) + '\n')
         print("get request about {0} is fail, retrying".format(url_str))
         # if retry_time is 1 and proxies:
         #     return auto_retry_get(url_str, headers=headers, timeout=timeout, retry_time=config['download_retry_times'],

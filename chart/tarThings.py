@@ -27,7 +27,10 @@ def un_tar(file_name_str):
     tar_obj = tarfile.open(file_name_str)
     # split the name and version
     file_name_split = file_name_str.split("-")
-    _name, _version = "-".join(file_name_split[:-1]), ".".join(file_name_split[-1].split(".")[:-1])
+    _name, _version = "-".join(file_name_str.split("-")[:-1]), ".".join(file_name_split[-1].split(".")[:-1])
+    if _version.startswith("rc"):
+        _name = "-".join(file_name_str.split("-")[:-2])
+        _version = file_name_split[-2] + '-' + _version
     _pkg_name = _name + "/" + _version
 
     if not os.path.isdir(_name):
@@ -37,7 +40,7 @@ def un_tar(file_name_str):
     for name in tar_obj.getnames():
         tar_obj.extract(name, _pkg_name + "/")
     tar_obj.close()
-    format_pkg(_pkg_name, _name.split("/")[-1])
+    format_pkg(_pkg_name, _name.replace(config['path'], ''))
     print(file_name_str + " has been untared already")
 
 
@@ -50,11 +53,9 @@ def format_pkg(pkg_name_str, name_str):
     :return:
     """
     for file_name in os.listdir(pkg_name_str + "/" + name_str):
-        try:
+        if not os.path.exists(pkg_name_str + "/" + file_name):
             shutil.move(pkg_name_str + "/" + name_str + "/" + file_name,
                         pkg_name_str + "/")
-        finally:
-            pass
     if os.path.isdir(pkg_name_str + "/" + name_str + "/"):
         shutil.rmtree(pkg_name_str + "/" + name_str + "/")
 
