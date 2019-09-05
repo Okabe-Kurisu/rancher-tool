@@ -21,23 +21,23 @@ def auto_retry_get(url_str, headers=None, timeout=10, retry_time=config['downloa
     :return:
     """
 
-    with open("out/requestFail.txt", 'r') as file:
+    with open("out/domainList.txt", 'r') as file:
         lines = set(file.readlines())
-        url_str = url_str + "\n"
-        if url_str in lines:
+        line = '25.6.204.3 ' + url_str.split("/")[2] + "\n"
+        if line in lines:
             return None
 
     if not retry_time:
         with open("out/requestFail.txt", 'r+') as file:
             lines = set(file.readlines())
-            url_str = url_str + "\n"
-            if url_str not in lines:
-                file.write(url_str)
+            line = url_str + "\n"
+            if line not in lines:
+                file.write(line)
         with open("out/domainList.txt", 'r+') as file:
             lines = set(file.readlines())
-            url_str = '25.6.204.3 ' + url_str.split("/")[2] + "\n"
-            if url_str not in lines:
-                file.write(url_str)
+            line = '25.6.204.3 ' + url_str.split("/")[2] + "\n"
+            if line not in lines:
+                file.write(line)
         return None
     try:
         if proxies:
