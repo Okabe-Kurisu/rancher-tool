@@ -7,13 +7,19 @@
 import requests
 import urllib3
 import json
+import docker
 from config import config
 
 
 class Harbor(object):
     urllib3.disable_warnings()
     session = requests.session()
-    base_url = ('https://' if config['harbor_tls'] else 'http://') + config['harbor_url']
+    base_url = ('https://' if config['harbor_tls'] else 'http://') + config['harbor_url'] + '/api/'
+    client = docker.from_env()
+    client.login(username=config['harbor_username'],
+                 password=config['harbor_password'],
+                 registry=config['harbor_url'])
+    json_headers = {'Content-Type': 'application/json'}
 
     def _login_harbor(self):
         print('trying to login harbor')
@@ -34,7 +40,7 @@ class Harbor(object):
         :param project_name_str:
         :return:
         """
-        check_project_url = self.base_url + "/api/projects?project_name=" + project_name_str
+        check_project_url = self.base_url + "projects?project_name=" + project_name_str
         res = self.session.head(check_project_url, verify=False)
         if res.status_code == 200:
             return True
@@ -55,20 +61,14 @@ class Harbor(object):
             return
 
         print('trying to create project' + project_name_str)
-        create_project_url = self.base_url + "/api/projects"
+        create_project_url = self.base_url + "projects"
         data = json.dumps({
             "project_name": project_name_str,
             "metadata": {
                 "public": "true"
             }
         })
-        res = self.session.post(url=create_project_url, data=data, verify=False,
-                                headers={'Content-Type': 'application/json'})
-
-        # if not login
-        if res.status_code == 401:
-            self._login_harbor()
-            return self.pre_push(project_name_str)
+        res = self._get_with_auth(create_project_url, data=data)
 
         assert res.status_code is 201, 'create project failed ' + str(res.status_code)
         print('create project success')
@@ -95,3 +95,57 @@ class Harbor(object):
 
         self._pre_push(project_name)
         return config['harbor_url'] + "/" + project_name
+
+    def _get_with_auth(self, url, data=None):
+        """
+        make sure get request has auth
+
+        :param url:
+        :return:
+        """
+
+        response = requests.get(url, verify=False, headers=self.json_headers, data=data)
+        if response == 401:
+            self._login_harbor()
+            return self._get_with_auth(url)
+        return response
+
+    def mv_image(self, origin_name_str, target_name_str):
+        """
+        move a image from a project to another project or just rename it
+
+        :param origin_name_str:
+        :param target_name_str:
+        :return:
+        """
+
+        image = self.client.images.pull(config['harbor_url'] + "/" + origin_name_str)
+        image_name = self.push(target_name_str)
+        image.tag(image_name)
+        self.client.images.push(image_name)
+
+        repository_name, tag = origin_name_str.split(':')[0], origin_name_str.split(':')[1]
+        delete_url = "{0}repositories/{1}/tags/{2}".format(self.base_url, repository_name, tag)
+        requests.delete(delete_url, verify=False, headers=self.json_headers)
+
+    def decorticate(self, project_name_str):
+        """
+        make wrong name right, for exp, /library/project/name => /project/name
+
+        :return:
+        """
+
+        project_url = "{0}projects?name={1}".format(self.base_url, project_name_str)
+        projects_response = self._get_with_auth(project_url)
+        projects, project_id = projects_response.json(encoding='utf-8'), 0
+        assert projects, 'project is not exist'
+        if len(projects) is 1:
+            project_id = projects[0]['project_id']
+        else:
+            for project in projects:
+                if project['name'] == project_name_str:
+                    project_id = project['project_id']
+        assert project_id, 'project is not exist'
+
+        repositories_url = "{0}repositories?project_id={1}"
+        repositories_response = self._get_with_auth(repositories_url)
