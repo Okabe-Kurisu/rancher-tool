@@ -53,12 +53,10 @@ def format_pkg(pkg_name_str, name_str):
         try:
             shutil.move(pkg_name_str + "/" + name_str + "/" + file_name,
                         pkg_name_str + "/")
-        except:
+        finally:
             pass
-    try:
+    if os.path.isdir(pkg_name_str + "/" + name_str + "/"):
         shutil.rmtree(pkg_name_str + "/" + name_str + "/")
-    except:
-        pass
 
 
 def find_and_un_tar():
