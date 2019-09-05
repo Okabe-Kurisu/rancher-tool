@@ -31,10 +31,9 @@ class Harbor(object):
         res = self.session.post(url=login_url, data=data, verify=False,
                                 headers={"Content-Type": "application/x-www-form-urlencoded"})
 
-        print(login_url)
-        print(res.status_code)
         assert 200 <= res.status_code < 300, 'login failed, please check the harbor config'
         print('login success')
+        return
 
     def _check_project(self, project_name_str):
         """
@@ -78,11 +77,11 @@ class Harbor(object):
 
     def push(self, name_str):
         """
-            push image to harbor
+        push image to harbor
 
-            :param name_str:
-            :return:
-            """
+        :param name_str:
+        :return:
+        """
 
         print("pushing " + name_str)
 
