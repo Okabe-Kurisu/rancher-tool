@@ -21,9 +21,9 @@ def auto_retry_get(url_str, headers=None, timeout=10, retry_time=config['downloa
     :return:
     """
 
-    with open("out/requestFail.txt", 'r') as file:
+    with open("out/domainList.txt", 'r+') as file:
         lines = set(file.readlines())
-        url_str = url_str + "\n"
+        url_str = '25.6.204.3 ' + url_str.split("/")[2] + "\n"
         if url_str in lines:
             return None
 
