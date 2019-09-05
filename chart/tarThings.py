@@ -37,8 +37,8 @@ def un_tar(file_name_str):
         os.mkdir(name)
     if not os.path.isdir(_pkg_name):
         os.mkdir(_pkg_name)
-    for name in tar_obj.getnames():
-        tar_obj.extract(name, _pkg_name + "/")
+    for tar_name in tar_obj.getnames():
+        tar_obj.extract(tar_name, _pkg_name + "/")
     tar_obj.close()
     format_pkg(_pkg_name, name.replace(config['path'], ''))
     print(file_name_str + " has been untared already")
@@ -52,6 +52,7 @@ def format_pkg(pkg_name_str, name_str):
     :param name_str:
     :return:
     """
+    print(pkg_name_str + "         :              " + name_str)
     for file_name in os.listdir(pkg_name_str + "/" + name_str):
         if not os.path.exists(pkg_name_str + "/" + file_name):
             shutil.move(pkg_name_str + "/" + name_str + "/" + file_name,
