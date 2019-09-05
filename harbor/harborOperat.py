@@ -21,9 +21,9 @@ class Harbor(object):
                  registry=config['harbor_url'])
     json_headers = {'Content-Type': 'application/json'}
 
-    def _login_harbor(self):
+    def login_harbor(self):
         print('trying to login harbor')
-        login_url = self.base_url + '/c/login'
+        login_url = self.base_url + 'c/login'
         data = {
             'principal': config['harbor_username'],
             'password': config['harbor_password'],
@@ -106,7 +106,7 @@ class Harbor(object):
 
         response = requests.get(url, verify=False, headers=self.json_headers)
         if response.status_code == 401:
-            self._login_harbor()
+            self.login_harbor()
             return self._get_with_auth(url)
         return response
 
@@ -120,7 +120,7 @@ class Harbor(object):
 
         response = requests.post(url, verify=False, headers=self.json_headers, data=data)
         if response.status_code == 401:
-            self._login_harbor()
+            self.login_harbor()
             return self._post_with_auth(url)
         return response
 
@@ -173,4 +173,5 @@ class Harbor(object):
 
 if __name__ == '__main__':
     harbor = Harbor()
-    harbor.decorticate('kibana')
+    harbor.login_harbor()
+    # harbor.decorticate('kibana')
