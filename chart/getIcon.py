@@ -21,9 +21,10 @@ def get_icon(chart_name_str, chart_path_str):
         chart_yaml = yaml.load(stream=chart, Loader=Loader)
         img_url = chart_yaml.get("icon")
 
-        if not img_url and (chart_path_str not in no_icon_dict and no_icon_dict[chart_path_str] is not 0):
-            no_icon_dict[chart_name_str] = 1
-            return
+        if not img_url:
+            if chart_path_str not in no_icon_dict and no_icon_dict[chart_path_str] is not 0:
+                no_icon_dict[chart_name_str] = 1
+                return
         # github's icon cannot get from the url
         elif img_url.startswith('https://github.com'):
             img_url = img_url \
