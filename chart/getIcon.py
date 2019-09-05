@@ -11,7 +11,8 @@ from utils import fakeUA
 from yaml import Loader, Dumper
 from config import config
 
-no_icon_list = []
+# if value is 0 mean this dir has logo, else no
+no_icon_dict = {}
 
 
 def get_icon(chart_name_str, chart_path_str):
@@ -20,8 +21,8 @@ def get_icon(chart_name_str, chart_path_str):
         chart_yaml = yaml.load(stream=chart, Loader=Loader)
         img_url = chart_yaml.get("icon")
 
-        if not img_url:
-            no_icon_list.append(chart_path_str)
+        if not img_url and (chart_path_str not in no_icon_dict and no_icon_dict[chart_path_str] is not 0):
+            no_icon_dict[chart_name_str] = 1
             return
         # github's icon cannot get from the url
         elif img_url.startswith('https://github.com'):
@@ -46,10 +47,12 @@ def get_icon(chart_name_str, chart_path_str):
                 # make yaml's icon from web url to local url
                 chart_yaml['icon'] = "file://../icon.png"
                 yaml.dump(chart_yaml, chart, Dumper)
-                print(chart_path_str + "'s logo has been downloaded already")
+            no_icon_dict[chart_name_str] = 0
+            print(chart_path_str + "'s logo has been downloaded already")
         else:
-            print(chart_path_str + "'s logo downloaded fail")
-            no_icon_list.append(chart_path_str)
+            if chart_path_str not in no_icon_dict or no_icon_dict[chart_path_str] is not 0:
+                no_icon_dict[chart_path_str] = 1
+                print(chart_path_str + "'s logo downloaded fail")
 
 
 def find_all_chart():
@@ -62,10 +65,9 @@ def find_all_chart():
             chart_name = chart_path + pkg_name + "/Chart.yaml"
             if os.path.isfile(chart_name):
                 get_icon(chart_name, chart_path)
-    if not no_icon_list:
-        with open("out/noIconList.txt", "w") as file:
-            for line in no_icon_list:
-                file.write(line + "\n")
+    with open("out/noIconList.txt", "w") as file:
+        for line in no_icon_dict:
+            file.write(line + "\n")
 
 
 if __name__ == '__main__':

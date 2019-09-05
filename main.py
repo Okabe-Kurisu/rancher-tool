@@ -14,6 +14,7 @@ def init():
 
     :return:
     """
+    print('initializing env(mean make 2 dir')
     if not os.path.isdir('out'):
         os.mkdir('out')
     if not os.path.isdir(config['path']):

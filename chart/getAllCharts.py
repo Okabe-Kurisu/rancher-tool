@@ -18,7 +18,7 @@ def get_all_tgz_url():
     lines = res.readlines()
     with open('out/tar.txt', 'w') as file:
         for line in lines:
-            file.write(line)
+            file.write(line + "\n")
     os.remove('out/tar.yaml')
     print('download complete')
 
@@ -40,7 +40,7 @@ def get_all_tgz():
             if not res or res.headers['content-type'] != 'application/x-tar':
                 print('download ' + file_name + ' is fail')
                 with open('out/failDownloadChart.txt', 'a') as file:
-                    file.write(line)
+                    file.write(line + "\n")
                 continue
             with open(config['path'] + file_name, 'wb') as file:
                 file.write(res.content)
