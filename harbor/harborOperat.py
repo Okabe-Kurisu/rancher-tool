@@ -30,6 +30,8 @@ class Harbor(object):
         }
         res = self.session.post(url=login_url, data=data, verify=False)
 
+        print(login_url)
+        print(res.status_code)
         assert 200 <= res.status_code < 300, 'login failed, please check the harbor config'
         print('login success')
 
