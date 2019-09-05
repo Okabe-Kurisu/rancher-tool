@@ -17,7 +17,6 @@ def tar():
     tar_file = config['path'] + 'tar/'
     if not os.path.isdir(tar_file):
         os.mkdir(tar_file)
-
     pass
 
 
@@ -32,6 +31,8 @@ def un_tar(file_name_str):
     # find version
     for s in file_name_split[:-1]:
         if s.replace('.', '').replace('v', '').isdigit():
+            version += s + '-'
+        elif s.replace('.', '').replace('rc', '').isdigit():
             version += s + '-'
         else:
             name += s + '-'
