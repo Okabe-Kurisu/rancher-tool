@@ -107,6 +107,7 @@ class Harbor(object):
         """
 
         response = requests.get(url, verify=False, headers=self.json_headers)
+        print(response.status_code)
         if response.status_code == 401:
             self.login_harbor()
             return self._get_with_auth(url)
