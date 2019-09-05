@@ -21,8 +21,10 @@ def auto_retry_get(url_str, headers=None, timeout=5, retry_time=config['download
     :return:
     """
     if not retry_time:
-        with open("out/requestFail.txt", 'a') as file:
-            file.write(url_str + " :\n")
+        with open("out/requestFail.txt", 'a+') as file:
+            lines = file.readlines()
+            if url_str not in lines:
+                file.write(url_str + "\n")
         return None
     try:
         if proxies:

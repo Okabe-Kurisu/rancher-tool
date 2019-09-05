@@ -27,10 +27,13 @@ def un_tar(file_name_str):
     tar_obj = tarfile.open(file_name_str)
     # split the name and version
     file_name_split = file_name_str.split("-")
-    _name, _version = "-".join(file_name_str.split("-")[:-1]), ".".join(file_name_split[-1].split(".")[:-1])
-    if _version.startswith("rc"):
+    _name, _version = "-".join(file_name_split[:-1]), ".".join(file_name_split[-1].split(".")[:-1])
+    if not _version.replace('.', '').isdigit():
+        print("!!!!!!!!!!!!!!!!", _name, _version)
         _name = "-".join(file_name_str.split("-")[:-2])
         _version = file_name_split[-2] + '-' + _version
+    else:
+        print("+++++++++++", _name, _version)
     _pkg_name = _name + "/" + _version
 
     if not os.path.isdir(_name):
