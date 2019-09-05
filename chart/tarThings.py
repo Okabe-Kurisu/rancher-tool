@@ -52,7 +52,6 @@ def format_pkg(pkg_name_str, name_str):
     :param name_str:
     :return:
     """
-    print(pkg_name_str + "         :              " + name_str)
     for file_name in os.listdir(pkg_name_str + "/" + name_str):
         if not os.path.exists(pkg_name_str + "/" + file_name):
             shutil.move(pkg_name_str + "/" + name_str + "/" + file_name,
