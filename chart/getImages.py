@@ -45,7 +45,7 @@ def list_all_image():
                 print(file_name + "'s requirement is all get")
     with open("out/images.txt", "w") as images_file:
         for line in images:
-            images_file.write(line + "\n")
+            images_file.write(line)
 
     print("images list has been saved")
 
