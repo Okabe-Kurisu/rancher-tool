@@ -23,7 +23,7 @@ class Harbor(object):
 
     def login_harbor(self):
         print('trying to login harbor')
-        login_url = self.base_url + 'c/login'
+        login_url = self.base_url.replace('/api/', '') + 'c/login'
         data = {
             'principal': config['harbor_username'],
             'password': config['harbor_password'],
