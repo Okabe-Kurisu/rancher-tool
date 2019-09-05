@@ -28,7 +28,8 @@ class Harbor(object):
             'principal': config['harbor_username'],
             'password': config['harbor_password'],
         }
-        res = self.session.post(url=login_url, data=data, verify=False)
+        res = self.session.post(url=login_url, data=data, verify=False,
+                                headers={"Content-Type": 'application/x-www-form-urlencoded; charset=UTF-8'})
 
         print(login_url)
         print(res.status_code)
