@@ -71,7 +71,7 @@ class Harbor(object):
         res = self._get_with_auth(create_project_url, data=data)
 
         assert 300 > res.status_code >= 200, 'create project failed ' + str(res.status_code)
-        print('create project success')
+        print('create project {0} success'.format(project_name_str))
 
     def push(self, name_str):
         """
@@ -108,6 +108,7 @@ class Harbor(object):
         if response == 401:
             self._login_harbor()
             return self._get_with_auth(url)
+        print(url)
         return response
 
     def mv_image(self, origin_name_str, target_name_str):
