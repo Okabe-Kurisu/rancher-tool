@@ -21,6 +21,12 @@ def auto_retry_get(url_str, headers=None, timeout=10, retry_time=config['downloa
     :return:
     """
 
+    with open("out/requestFail.txt", 'r') as file:
+        lines = set(file.readlines())
+        url_str = url_str + "\n"
+        if url_str in lines:
+            return None
+
     if not retry_time:
         with open("out/requestFail.txt", 'r+') as file:
             lines = set(file.readlines())
