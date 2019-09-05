@@ -18,7 +18,7 @@ def get_all_tgz_url():
     lines = res.readlines()
     with open('out/tar.txt', 'w') as file:
         for line in lines:
-            file.write(line + "\n")
+            file.write(line)
     os.remove('out/tar.yaml')
     print('download complete')
 
