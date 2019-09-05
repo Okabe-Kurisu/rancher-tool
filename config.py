@@ -11,8 +11,8 @@ config = {
     'download_retry_times': 3,
 
     # file path
-    'path': "./pkg/",
-    # 'path': "/home/amadeus/Documents/hubtgz/",
+    # 'path': "./pkg/",
+    'path': "/home/amadeus/Documents/hubtgz/",
 
     # harbor config
     # 'harbor_url': "localhost",

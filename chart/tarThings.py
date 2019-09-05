@@ -25,22 +25,30 @@ def un_tar(file_name_str):
     print("-------------untaring " + file_name_str + "-------------")
 
     tar_obj = tarfile.open(file_name_str)
+
     # split the name and version
     file_name_split = file_name_str.split("-")
-    name, version = "-".join(file_name_split[:-1]), ".".join(file_name_split[-1].split(".")[:-1])
-    if not version.replace('.', '').isdigit() and not version.startswith('v'):
-        name = "-".join(file_name_str.split("-")[:-2])
-        version = file_name_split[-2] + '-' + version
-    _pkg_name = name + "/" + version
+    name, version = '', ''
+    # find version
+    for s in file_name_split[:-1]:
+        if s.replace('.', '').replace('v', '').isdigit():
+            version += s + '-'
+        else:
+            name += s + '-'
+    version = version + file_name_split[-1].replace('.tgz', '')
+    name = ''.join(name[:-1])
+
+    pkg_name = name + "/" + version
 
     if not os.path.isdir(name):
         os.mkdir(name)
-    if not os.path.isdir(_pkg_name):
-        os.mkdir(_pkg_name)
+    if not os.path.isdir(pkg_name):
+        os.mkdir(pkg_name)
     for tar_name in tar_obj.getnames():
-        tar_obj.extract(tar_name, _pkg_name + "/")
+        tar_obj.extract(tar_name, pkg_name + "/")
     tar_obj.close()
-    format_pkg(_pkg_name, name.replace(config['path'], ''))
+
+    format_pkg(pkg_name, name.replace(config['path'], ''))
     print(file_name_str + " has been untared already")
 
 
@@ -67,7 +75,6 @@ def find_and_un_tar():
         if not (file_name.endswith("tgz") or file_name.endswith("tar")) \
                 or os.path.isdir(config['path'] + file_name):
             continue
-        print(file_name)
         un_tar(config['path'] + file_name)
 
 

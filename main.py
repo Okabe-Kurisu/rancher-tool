@@ -25,8 +25,8 @@ def init():
 
 if __name__ == '__main__':
     init()
-    getAllCharts.get_all_tgz_url()
-    getAllCharts.get_all_tgz()
+    # getAllCharts.get_all_tgz_url()
+    # getAllCharts.get_all_tgz()
     tarThings.find_and_un_tar()
     getIcon.find_all_chart()
     getImages.list_all_image()
