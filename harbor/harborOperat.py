@@ -30,7 +30,7 @@ class Harbor(object):
         }
         res = self.session.post(url=login_url, data=data, verify=False)
 
-        assert res.status_code is 200, 'login failed, please check the harbor config'
+        assert 200 <= res.status_code < 300, 'login failed, please check the harbor config'
         print('login success')
 
     def _check_project(self, project_name_str):
