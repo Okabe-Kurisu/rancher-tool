@@ -25,6 +25,7 @@ def get_all_tgz_url():
 
 
 def get_all_tgz():
+    get_all_tgz_url()
     with open('out/tar.txt') as tar_list:
         lines = tar_list.readlines()
         for line in lines:

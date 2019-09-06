@@ -16,10 +16,12 @@ class Harbor(object):
     session = requests.session()
     base_url = ('https://' if config['harbor_tls'] else 'http://') + config['harbor_url'] + '/api/'
     client = docker.from_env()
-    client.login(username=config['harbor_username'],
-                 password=config['harbor_password'],
-                 registry=config['harbor_url'])
     json_headers = {'Content-Type': 'application/json'}
+
+    def __init__(self):
+        self.client.login(username=config['harbor_username'],
+                          password=config['harbor_password'],
+                          registry=config['harbor_url'])
 
     def login_harbor(self):
         print('trying to login harbor')
@@ -89,7 +91,7 @@ class Harbor(object):
         self._pre_push(project_name)
         return config['harbor_url'] + "/" + project_name
 
-    def _name_format(self, name_str):
+    def _name_format(name_str):
         name_split, project_name = name_str.split("/"), name_str
         if '.' in name_split[0]:
             with open("out/domain.txt", "a") as file:
@@ -155,7 +157,7 @@ class Harbor(object):
         image = self.client.images.pull(config['harbor_url'] + "/" + origin_name_str)
         image_name = self.pre_push(target_name_str)
         image.tag(image_name)
-        self.client.images.pre_push(image_name)
+        self.client.images.push(image_name)
 
         repository_name, tag = origin_name_str.split(':')[0], origin_name_str.split(':')[1]
         delete_url = "{0}repositories/{1}/tags/{2}".format(self.base_url, repository_name, tag)
@@ -204,6 +206,16 @@ class Harbor(object):
             return True
         else:
             return False
+
+
+harbor = None
+
+
+def get_harbor():
+    global harbor
+    if not harbor:
+        harbor = Harbor()
+    return harbor
 
 
 if __name__ == '__main__':
