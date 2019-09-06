@@ -172,6 +172,10 @@ class Harbor(object):
             target = '/'.join(x.split('/')[:-2])
             self.mv_image(x, target)
 
+    def check_image(self, line):
+        # todo
+        pass
+
 
 if __name__ == '__main__':
     harbor = Harbor()
