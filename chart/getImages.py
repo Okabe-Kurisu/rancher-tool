@@ -25,7 +25,7 @@ def list_all_image():
             while res.poll() is None:
                 line = res.stdout.readline().decode('utf-8').replace(" ", "")
                 if line.startswith("image:"):
-                    line = line.replace("image:", "").replace("\"", "")
+                    line = line.replace("image:", "").replace("\"", "").replace("'", '').replace('"', '')
                     images[line] = 1
                     images_of_chart += 1
 
