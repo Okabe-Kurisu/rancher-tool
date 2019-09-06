@@ -121,7 +121,6 @@ class Harbor(object):
         """
 
         response = self.session.post(url, verify=False, headers=self.json_headers, data=data)
-        print(response.status_code)
         if response.status_code == 401:
             self.login_harbor()
             return self._post_with_auth(url, data=data)

@@ -5,7 +5,6 @@
 import docker
 
 from harbor.harborOperat import Harbor
-from docker.errors import ImageNotFound
 from config import config
 
 client = docker.from_env()
@@ -19,10 +18,14 @@ def pull_and_push_all():
     with open("out/pullOrPushLog.txt", "w") as error_file:
         images_file = open("out/images.txt")
         images_list = images_file.readlines()
+        total_count, point = len(images_list), 0
+
         for line in images_list:
             line = line.replace("\n", "")
+            point += 1
             try:
-                print("--------------pull and push with " + line + "--------------")
+                print("--deal with {0}, less {1} to download, total percent {2:.2f}%--"
+                      .format(line, str(total_count - point), point / total_count * 100))
                 image = pull(line)
                 push(image, line)
             except Exception as e:
