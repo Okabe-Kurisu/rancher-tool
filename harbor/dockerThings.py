@@ -48,14 +48,14 @@ def pull(image_name, retry_time=config['docker_retry_times']):
     """
 
     print("pulling " + image_name)
+    with open("out/dockerDomainList.txt", 'r+') as file:
+        lines = set(file.readlines())
+        line = '25.6.204.3 ' + image_name.split("/")[0] + "\n"
+        if line not in lines:
+            file.write(line)
     try:
         return client.images.pull(image_name)
     except Exception:
-        with open("out/dockerDomainList.txt", 'w') as file:
-            lines = set(file.readlines())
-            line = '25.6.204.3 ' + image_name.split("/")[0] + "\n"
-            if line not in lines:
-                file.write(line)
         print("docker {0} is not found, maybe is net issue, retrying".format(image_name))
         return pull(image_name, retry_time=retry_time - 1)
 
@@ -81,7 +81,7 @@ def clear_trash():
         return
     for docker_id in id_list:
         print('removing ' + docker_id)
-        os.popen('docker rmi ' + docker_id)
+        os.popen('docker rmi -f ' + docker_id)
 
 
 def filter_images(keyword_str):
@@ -105,14 +105,10 @@ def filter_images(keyword_str):
             if point_char != ' ' and pre_char == ' ':
                 part += 1
                 part_content = ''.join(line[point:]).split(' ')[0]
-                # if in part1(name part), get id
-                if part is 1:
-                    docker_name = part_content
-                elif part is 2:
-                    docker_name += ':' + part_content
-                else:
+                if part is 3:
+                    docker_list.append(part_content)
+                if part > 3:
                     break
-        docker_list.append(docker_name)
     return docker_list
 
 

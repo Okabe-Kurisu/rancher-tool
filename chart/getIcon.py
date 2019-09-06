@@ -66,7 +66,7 @@ def get_icon(chart_name_str, chart_path_str):
         yaml.dump(chart_yaml, file, Dumper)
 
 
-def find_all_chart():
+def get_all_icon():
     print("-----------start downloading icon ---------------")
     for file_name in os.listdir(config['path']):
         if os.path.isfile(config['path'] + file_name):
@@ -82,4 +82,4 @@ def find_all_chart():
 
 
 if __name__ == '__main__':
-    find_all_chart()
+    get_all_icon()
