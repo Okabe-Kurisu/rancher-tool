@@ -49,13 +49,17 @@ RancherTool version{0}
 
 def start():
     args = sys.argv[1:]
-    if not len(args):
+    if not len(args) or "--help" in args:
         print(help_text)
         return
+    elif "--config" in args:
+        print(config)
+        return
+    elif "--clear" in args:
+        dockerThings.clear_trash()
+        return
+    init()
     for arg in args:
-        if arg == "--help":
-            print(help_text)
-            return
         if arg == "--gat":
             getAllCharts.get_all_tgz()
         if arg == "--fut":
@@ -66,9 +70,6 @@ def start():
             getImages.list_all_image()
         if arg == "--ppa":
             dockerThings.pull_and_push_all()
-        if arg == "--config":
-            print(config)
-            return
         if arg == "--init":
             getAllCharts.get_all_tgz()
             tarThings.find_and_un_tar()
@@ -77,9 +78,6 @@ def start():
             getImages.list_all_image()
             dockerThings.pull_and_push_all()
             return
-        if arg == "--clear":
-            dockerThings.clear_trash()
-            return
         else:
             print('wrong input')
             print(help_text)
@@ -87,5 +85,4 @@ def start():
 
 
 if __name__ == '__main__':
-    init()
     start()

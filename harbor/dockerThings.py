@@ -5,15 +5,8 @@
 import docker
 import os
 
-from harbor.harborOperat import Harbor
+from harbor.harborOperat import get_harbor as harbor
 from config import config
-
-client = docker.from_env()
-client.login(username=config['harbor_username'],
-             password=config['harbor_password'],
-             registry=config['harbor_url'])
-harbor = Harbor()
-
 
 def pull_and_push_all():
     with open("out/pullOrPushLog.txt", "w") as error_file:
@@ -30,7 +23,7 @@ def pull_and_push_all():
                 if not harbor.check_image(line):
                     image = pull(line)
                     push(image, line)
-                    client.images.remove(image=image)
+                    harbor.client.images.remove(image=image)
             except Exception as e:
                 print('error with dealing with ' + line + ', plz read out/pullOrPushLog.txt')
                 error_file.write("{0}: {1}\n".format(line, str(e)))
@@ -54,7 +47,7 @@ def pull(image_name, retry_time=config['docker_retry_times']):
         if line not in lines:
             file.write(line)
     try:
-        return client.images.pull(image_name)
+        return harbor.client.images.pull(image_name)
     except Exception:
         print("docker {0} is not found, maybe is net issue, retrying".format(image_name))
         return pull(image_name, retry_time=retry_time - 1)
@@ -63,7 +56,7 @@ def pull(image_name, retry_time=config['docker_retry_times']):
 def push(image, name_str):
     project_name = harbor.pre_push(name_str)
     image.tag(project_name)
-    client.images.pre_push(project_name)
+    harbor.client.images.pre_push(project_name)
     print("push " + name_str + " finish")
 
 
