@@ -61,10 +61,9 @@ def pull(image_name, retry_time=config['docker_retry_times']):
 
 
 def push(image, name_str):
-    project_name = harbor.push(name_str)
+    project_name = harbor.pre_push(name_str)
     image.tag(project_name)
-    print(project_name)
-    client.images.push(project_name)
+    client.images.pre_push(project_name)
     print("push " + name_str + " finish")
 
 
@@ -98,9 +97,9 @@ def filter_images(keyword_str):
     docker_list = []
     for line in lines:
         point, part, length, docker_name = -1, 0, len(line), ''
-        while point < length:
+        while point < length - 1:
             point += 1
-            point_char, pre_char = line[point], ' ' if point is 0 else line[point - 1]
+            point_char, pre_char = line[point], line[point - 1] if point is not 0 else ' '
 
             # if there is new part
             if point_char != ' ' and pre_char == ' ':

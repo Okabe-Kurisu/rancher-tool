@@ -75,7 +75,7 @@ class Harbor(object):
         assert 300 > res.status_code >= 200, 'create project failed ' + str(res.status_code)
         print('create project {0} success'.format(project_name_str))
 
-    def push(self, name_str):
+    def pre_push(self, name_str):
         """
         push image to harbor
 
@@ -84,8 +84,12 @@ class Harbor(object):
         """
 
         print("pushing " + name_str)
-
         # make sure project is exist
+        project_name = self._name_format(name_str)
+        self._pre_push(project_name)
+        return config['harbor_url'] + "/" + project_name
+
+    def _name_format(self, name_str):
         name_split, project_name = name_str.split("/"), name_str
         if '.' in name_split[0]:
             with open("out/domain.txt", "a") as file:
@@ -94,9 +98,7 @@ class Harbor(object):
             name_split = project_name.split("/")
         if len(name_split) is 1:
             project_name = 'library/' + name_split[0]
-
-        self._pre_push(project_name)
-        return config['harbor_url'] + "/" + project_name
+        return project_name
 
     def _get_with_auth(self, url):
         """
@@ -126,6 +128,20 @@ class Harbor(object):
             return self._post_with_auth(url, data=data)
         return response
 
+    def _delete_with_auth(self, url):
+        """
+                make sure get request has auth
+
+                :param url:
+                :return:
+                """
+
+        response = self.session.delete(url, verify=False, headers=self.json_headers)
+        if response.status_code == 401:
+            self.login_harbor()
+            return self._get_with_auth(url)
+        return response
+
     def mv_image(self, origin_name_str, target_name_str):
         """
         move a image from a project to another project or just rename it
@@ -137,13 +153,13 @@ class Harbor(object):
 
         print("move {0} to {1}".format(origin_name_str, target_name_str))
         image = self.client.images.pull(config['harbor_url'] + "/" + origin_name_str)
-        image_name = self.push(target_name_str)
+        image_name = self.pre_push(target_name_str)
         image.tag(image_name)
-        self.client.images.push(image_name)
+        self.client.images.pre_push(image_name)
 
         repository_name, tag = origin_name_str.split(':')[0], origin_name_str.split(':')[1]
         delete_url = "{0}repositories/{1}/tags/{2}".format(self.base_url, repository_name, tag)
-        self.session.delete(delete_url, verify=False, headers=self.json_headers)
+        self._delete_with_auth(delete_url)
 
     def decorticate(self, project_name_str):
         """
@@ -173,8 +189,21 @@ class Harbor(object):
             self.mv_image(x, target)
 
     def check_image(self, line):
-        # todo
-        pass
+        """
+        check if this image exist in harbor
+
+        :param line:
+        :return:
+        """
+
+        project_name = self._name_format(line)
+        repository_name, tag = project_name.split(':')[0], project_name.split(':')[1]
+        registry_url = "{0}repositories/{1}/tags/{2}".format(self.base_url, repository_name, tag)
+        res = self._get_with_auth(registry_url)
+        if res.status_code is 200:
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':
