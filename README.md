@@ -8,16 +8,18 @@
 - 迁移harbor中镜像所属的项目，类似`mv`操作
 - 清空全部带有harbor地址标记的镜像。
 - 将harbor中带有多层包名的项目迁移到正确的位置
+- 将合并后的chart包上传到rancher的应用商店中
   
 ## 环境
-该脚本需要以下条件才可使用，请确认安装后在使用
+该脚本需要以下条件才可使用，请确认都具备后
 
+- git
 - docker
 - helm
 - python3+
 - pip
 - 系统为linux并且使用最高权限运行该脚本。
-- 有办法访问googleapi
+- 有办法访问google api
 
 ## 安装
 通过`git clone`命令克隆该项目到路径中。然后再使用pip安装python依赖，例如：
@@ -37,6 +39,10 @@ pip install -r requirements.txt
 |docker_retry_times|int|docker拉取时的重试次数|
 |download_retry_times|int|下载图片或者chart包时的重试次数|
 |path|str|下载的chart包所在的路径，默认存储在当前文件夹的`pkg`目录下|
+|git_path|str|要生成的git repo所在的路径，如果这个文件夹不存在会自动创建|
+|git_url|str|远程仓库的地址|
+|git_username|str|远程仓库的账号|
+|git_password|str|远程仓库的密码|
 |harbor_url|str|harbor的域名，不要加协议|
 |harbor_tls|boolean|harbor是否开启了tls|
 |harbor_username|str|harbor的管理员账号|
@@ -64,9 +70,8 @@ flag列表如下：
 |init|顺序执行从获取chart列表到推送镜像到harbor之间的全部动作，耗时及其长，不建议使用|
 |clear|会清空全部带有harbor地址标记的镜像。同id的全删，谨慎使用。|
 |skin [project]|会将[project]中多层项目名包裹的image剥离出来|
+|git|将chart文件上传到git|
 
 部分flag拥有阻止其他flag生效的作用，其优先级如下所示：
 ```help > init > skin > config > clear```
 
-## 未来功能
-* [ ] 将合并后的chart包部署到rancher的应用商店中

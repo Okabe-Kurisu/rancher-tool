@@ -89,3 +89,4 @@ pkg/
 venv/
 out/
 .idea/
+git/
