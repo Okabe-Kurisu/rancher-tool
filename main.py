@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Author  : Xie Chuyu
 # @Software: PyCharm
-from chart import getIcon, getImages, tarThings, getAllCharts
+from chart import getIcon, getImages, tarThings, getAllCharts, gitOperat
 from harbor import dockerThings, harborOperat
 import os
 import sys
@@ -84,6 +84,8 @@ def start():
             getImages.list_all_image()
         if arg == "--ppa":
             dockerThings.pull_and_push_all()
+        if arg == "--git":
+            gitOperat.merge_repo()
         else:
             print('wrong input')
             print(help_text)

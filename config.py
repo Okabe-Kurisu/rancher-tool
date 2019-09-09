@@ -12,6 +12,9 @@ config = {
 
     # file path
     'path': "./pkg/",
+    'git_path': "./git/",
+
+    'git_url': "",
 
     # harbor config
     'harbor_url': "127.0.0.1",
