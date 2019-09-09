@@ -20,10 +20,10 @@ def pull_and_push_all():
             try:
                 print("--deal with {0}, less {1} to download, total percent {2:.2f}%--"
                       .format(line, str(total_count - point), point / total_count * 100))
-                if not harbor.check_image(line):
+                if not harbor().check_image(line):
                     image = pull(line)
                     push(image, line)
-                    harbor.client.images.remove(image=image)
+                    harbor().client.images.remove(image=image)
             except Exception as e:
                 print('error with dealing with ' + line + ', plz read out/pullOrPushLog.txt')
                 error_file.write("{0}: {1}\n".format(line, str(e)))
@@ -47,16 +47,16 @@ def pull(image_name, retry_time=config['docker_retry_times']):
         if line not in lines:
             file.write(line)
     try:
-        return harbor.client.images.pull(image_name)
+        return harbor().client.images.pull(image_name)
     except Exception:
         print("docker {0} is not found, maybe is net issue, retrying".format(image_name))
         return pull(image_name, retry_time=retry_time - 1)
 
 
 def push(image, name_str):
-    project_name = harbor.pre_push(name_str)
+    project_name = harbor().pre_push(name_str)
     image.tag(project_name)
-    harbor.client.images.pre_push(project_name)
+    harbor().client.images.pre_push(project_name)
     print("push " + name_str + " finish")
 
 

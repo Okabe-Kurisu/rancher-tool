@@ -78,7 +78,7 @@ def start():
             getAllCharts.get_all_tgz()
         if arg == "--fut":
             tarThings.find_and_un_tar()
-        if arg == "--gai":
+        if arg == "--gaicon":
             getIcon.get_all_icon()
         if arg == "--gai":
             getImages.list_all_image()
