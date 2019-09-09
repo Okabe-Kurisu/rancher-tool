@@ -91,7 +91,7 @@ class Harbor(object):
         self._pre_push(project_name)
         return config['harbor_url'] + "/" + project_name
 
-    def _name_format(name_str):
+    def _name_format(self, name_str):
         name_split, project_name = name_str.split("/"), name_str
         if '.' in name_split[0]:
             with open("out/domain.txt", "a") as file:
@@ -155,13 +155,22 @@ class Harbor(object):
 
         print("move {0} to {1}".format(origin_name_str, target_name_str))
         image = self.client.images.pull(config['harbor_url'] + "/" + origin_name_str)
+        if not image:
+            return
+        else:
+            image = image[0]
         image_name = self.pre_push(target_name_str)
         image.tag(image_name)
         self.client.images.push(image_name)
 
-        repository_name, tag = origin_name_str.split(':')[0], origin_name_str.split(':')[1]
+        if ':' in origin_name_str:
+            repository_name, tag = origin_name_str.split(':')[0], origin_name_str.split(':')[1]
+        else:
+            repository_name, tag = origin_name_str, 'latest'
         delete_url = "{0}repositories/{1}/tags/{2}".format(self.base_url, repository_name, tag)
-        self._delete_with_auth(delete_url)
+        res = self._delete_with_auth(delete_url)
+        assert res.status_code is 200, 'delete {} failed'.format(origin_name_str)
+        print('move {} to {} success'.format(origin_name_str, target_name_str))
 
     def decorticate(self, project_name_str):
         """
@@ -185,10 +194,14 @@ class Harbor(object):
         repositories_url = "{0}repositories?project_id={1}".format(self.base_url, project_id)
         repositories_response = self._get_with_auth(repositories_url)
         repositories = repositories_response.json(encoding='utf-8')
-        wait_to_decorticate = [x['name'] for x in repositories if len(x['name'].split('/')) > 1]
+
+        wait_to_decorticate = [x['name'] for x in repositories if len(x['name'].split('/')) > 2]
         for x in wait_to_decorticate:
-            target = '/'.join(x.split('/')[:-2])
-            self.mv_image(x, target)
+            target = '/'.join(x.split('/')[-2:])
+            try:
+                self.mv_image(x, target)
+            except Exception as e:
+                print(e)
 
     def check_image(self, line):
         """

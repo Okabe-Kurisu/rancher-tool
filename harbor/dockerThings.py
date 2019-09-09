@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # @Author  : Xie Chuyu
 # @Software: PyCharm
-import docker
 import os
 
 from harbor.harborOperat import get_harbor as harbor
