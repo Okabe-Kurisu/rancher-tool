@@ -213,7 +213,10 @@ class Harbor(object):
         """
 
         project_name = self._name_format(line)
-        repository_name, tag = project_name.split(':')[0], project_name.split(':')[1]
+        if ':' in project_name:
+            repository_name, tag = project_name.split(':')[0], project_name.split(':')[1]
+        else:
+            repository_name, tag = project_name, 'latest'
         registry_url = "{0}repositories/{1}/tags/{2}".format(self.base_url, repository_name, tag)
         res = self._get_with_auth(registry_url)
         if res.status_code is 200:
