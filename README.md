@@ -33,8 +33,9 @@ pip install -r requirements.txt
 ## 配置脚本
 根据实际情况，编辑`config.py`来更好的使用脚本。
 其参数如下：
+
 |参数|类型|描述|
-|--|---|------|
+|:--|:---:|:------|
 |proxies|dict|如果不需要代理，则设置为None。如果需要，按照`{'http': 'http://localhost:9527', 'https': 'http://localhost:9527'}`的格式设置|
 |docker_retry_times|int|docker拉取时的重试次数|
 |download_retry_times|int|下载图片或者chart包时的重试次数|
@@ -59,7 +60,7 @@ python main.py [--flag] # flag可以写多个
 flag列表如下：
 
 |参数|描述|
-|----|----|
+|:----|:----|
 |help|获取使用方法|
 |gat|从谷歌上得到held chart列表。并保存out/tar.txt。然后会将列表中的全部chart的压缩包下载下来，如果遇到已经下载过的，则会跳过|
 |fut|将已经下载下来的包解压并且按照项目名称对于多个版本进行合并|
