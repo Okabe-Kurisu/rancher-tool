@@ -20,13 +20,14 @@ def init():
         os.mkdir('out')
     if not os.path.isdir(config['path']):
         os.mkdir(config['path'])
-    if not os.path.isfile('out/domainList.txt') or not os.path.isfile('out/requestFail.txt'):
+    if not os.path.isfile('out/domainList.txt') or not os.path.isfile('out/requestFail.txt') or not os.path.isfile(
+            'out/dockerDomainList.txt'):
         open('out/domainList.txt', 'w')
         open('out/requestFail.txt', 'w')
         open('out/dockerDomainList.txt', 'w')
 
 
-version = '1.21'
+version = '1.22'
 help_text = """
 RancherTool version{0}
 与rancher相关的小工具合集
@@ -76,16 +77,18 @@ def start():
     for arg in args:
         if arg == "--gat":
             getAllCharts.get_all_tgz()
-        if arg == "--fut":
+        elif arg == "--fut":
             tarThings.find_and_un_tar()
-        if arg == "--gaicon":
+        elif arg == "--gaicon":
             getIcon.get_all_icon()
-        if arg == "--gai":
+        elif arg == "--gai":
             getImages.list_all_image()
-        if arg == "--ppa":
+        elif arg == "--ppa":
             dockerThings.pull_and_push_all()
-        if arg == "--git":
+        elif arg == "--git":
             gitOperat.merge_repo()
+        elif not arg:
+            continue
         else:
             print('wrong input')
             print(help_text)
