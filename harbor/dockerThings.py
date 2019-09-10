@@ -56,7 +56,7 @@ def pull(image_name, retry_time=config['docker_retry_times']):
 def push(image, name_str):
     project_name = harbor().pre_push(name_str)
     image.tag(project_name)
-    harbor().client.images.pre_push(project_name)
+    harbor().client.images.push(project_name)
     print("push " + name_str + " finish")
 
 
