@@ -54,6 +54,9 @@ def merge_repo():
 
             repo.index.add(items=['templates/'])
             info = 'upload {} at {}'.format(file_name, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+
+            if repo.is_dirty():
+                continue
             repo.index.commit(info)
             print(info)
             origin = repo.remotes.origin
