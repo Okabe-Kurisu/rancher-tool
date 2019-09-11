@@ -41,6 +41,7 @@ RancherTool version{0}
     然后会将列表中的全部chart的压缩包下载下来，如果遇到已经下载过的，则会跳过
     --fut               将已经下载下来的包解压并且按照项目名称对于多个版本进行合并
     --gai               从已经下载下来的包中得到全部需要的docker镜像，并存储在out/images.txt中
+    --gaicon            为所有的包下载图标
     --ppa               从out/image.txt中逐个拉取镜像，并且推送到harbor中
     --config            输出全部配置信息
     --init              顺序执行从获取chart列表到推送镜像到harbor之间的全部动作，耗时及其长，不建议使用
