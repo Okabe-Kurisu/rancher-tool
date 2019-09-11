@@ -53,6 +53,10 @@ def merge_repo():
                 shutil.copy(origin_name, target_name)
 
             repo.index.add(items=['templates/'])
+
+            # this function result is wrong
+            if not repo.is_dirty():
+                continue
             info = 'upload {} at {}'.format(file_name, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
             repo.index.commit(info)
             print(info)

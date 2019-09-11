@@ -44,7 +44,7 @@ def auto_retry_get(url_str, headers=None, timeout=10, retry_time=config['downloa
             response = requests.get(url_str, headers=headers, timeout=timeout, verify=False, proxies=proxies)
         else:
             response = requests.get(url_str, headers=headers, timeout=timeout, verify=False)
-        assert 200 <= response.status_code <= 300
+        assert 200 <= response.status_code < 400
         return response
     except Exception as e:
         print("get request about {0} is fail, retrying".format(url_str))
