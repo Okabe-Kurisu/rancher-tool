@@ -71,7 +71,7 @@ flag列表如下：
 |init|顺序执行从获取chart列表到推送镜像到harbor之间的全部动作，耗时及其长，不建议使用|
 |clear|会清空全部带有harbor地址标记的镜像。同id的全删，谨慎使用。|
 |skin [project]|会将[project]中多层项目名包裹的image剥离出来|
-|git|将chart文件上传到git|
+|git|提交全部commit|
 
 部分flag拥有阻止其他flag生效的作用，其优先级如下所示：
 ```help > init > skin > config > clear```

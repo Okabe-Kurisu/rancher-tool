@@ -6,6 +6,8 @@ import os
 import shutil
 import tarfile
 from config import config
+from chart.gitOperat import get_git as git
+import time
 
 
 def tar():
@@ -52,6 +54,9 @@ def un_tar(file_name_str):
     format_pkg(pkg_name, name.replace(config['path'], ''))
     print(file_name_str + " has been untared already")
 
+    if git().add(path_str=pkg_name):
+        git().commit(':tada: upload {} at {}'.format(pkg_name, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+
 
 def format_pkg(pkg_name_str, name_str):
     """
@@ -77,6 +82,7 @@ def find_and_un_tar():
                 or os.path.isdir(config['path'] + file_name):
             continue
         un_tar(config['path'] + file_name)
+    git().tag('origin at ' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
 
 if __name__ == '__main__':

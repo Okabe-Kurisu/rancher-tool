@@ -9,6 +9,8 @@ from utils.request import auto_retry_get
 from utils import fakeUA
 from yaml import Loader, Dumper
 from config import config
+from chart.gitOperat import get_git as git
+import time
 
 # if value is 0 mean this dir has logo, else no
 no_icon_dict = {}
@@ -72,6 +74,10 @@ def get_icon(chart_name_str, chart_path_str):
         chart_yaml['icon'] = "file://.." + icon_name
         yaml.dump(chart_yaml, file, Dumper)
 
+        if git().add(path_str=chart_path_str):
+            git().commit(':lipstick: update icon for {} at {}'.
+                         format(chart_path_str, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+
 
 def get_all_icon():
     print("-----------start downloading icon ---------------")
@@ -86,10 +92,12 @@ def get_all_icon():
                     get_icon(chart_name, chart_path)
                 except:
                     continue
+
+    git().tag('origin logo at ' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     with open("out/noIconList.txt", "w") as file:
         for line in no_icon_dict:
             if no_icon_dict[line] is 1:
-                file.write(line + "\n")
+                file.write(line.replace(config['path'], '') + "\n")
 
 
 if __name__ == '__main__':

@@ -47,6 +47,7 @@ RancherTool version{0}
     --init              顺序执行从获取chart列表到推送镜像到harbor之间的全部动作，耗时及其长，不建议使用
     --clear             会清空全部带有harbor地址标记的镜像。同id的全删，谨慎使用。
     --skin [project]    会将[project]中多层项目名包裹的image剥离出来
+    --git               提交全部commit
 """.format(version)
 
 
@@ -87,7 +88,7 @@ def start():
         elif arg == "--ppa":
             dockerThings.pull_and_push_all()
         elif arg == "--git":
-            gitOperat.merge_repo()
+            gitOperat.push()
         elif not arg:
             continue
         else:
