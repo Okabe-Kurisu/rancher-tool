@@ -31,7 +31,7 @@ def list_all_image():
 
             # if this chart has no image, log it
             if not images_of_chart:
-                with open("out/noImagesList.txt", "a") as file:
+                with open("out/NullList/noImagesList.txt", "a") as file:
                     file.write(file_name + '\n')
 
             # reading stderr, if contain error, write into file

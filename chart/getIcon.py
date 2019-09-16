@@ -89,13 +89,13 @@ def get_all_icon():
                 except:
                     continue
 
-    with open("out/noIconList.txt", "w") as file:
+    with open("out/NullList/noIconList.txt", "w") as file:
         for line in no_icon_dict:
             if no_icon_dict[line] is 1:
                 file.write(line.replace(config['path'], '') + "\n")
 
     os.system('cd {} && git add templates'.format(config['git_path']))
-    git().commit(':lipstick: update icon at {0}, last {1} cherts has no icon'.format(
+    git().commit(':lipstick: update icon at {0}, last {1} charts has no icon'.format(
         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
         len([x for x in no_icon_dict if no_icon_dict[x] is 1]))
     )

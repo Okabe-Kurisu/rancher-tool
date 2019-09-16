@@ -38,11 +38,12 @@ class Git(object):
         else:
             repo = Repo(config['git_path'])
 
-        origin = repo.create_remote('origin', config['git_url'])
-        origin.fetch()
-        repo.create_head('master', origin.refs.master)
-        repo.heads.master.set_tracking_branch(origin.refs.master)
-        repo.heads.master.checkout()
+        if not repo.remotes.origin:
+            origin = repo.create_remote('origin', config['git_url'])
+            origin.fetch()
+            repo.create_head('master', origin.refs.master)
+            repo.heads.master.set_tracking_branch(origin.refs.master)
+            repo.heads.master.checkout()
         return repo
 
     def add(self, path_str=None, path_list=None):
