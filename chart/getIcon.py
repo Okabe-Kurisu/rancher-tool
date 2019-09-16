@@ -9,6 +9,8 @@ from utils.request import auto_retry_get
 from utils import fakeUA
 from yaml import Loader, Dumper
 from config import config
+from chart.gitOperat import get_git as git
+import time
 
 # if value is 0 mean this dir has logo, else no
 no_icon_dict = {}
@@ -86,10 +88,17 @@ def get_all_icon():
                     get_icon(chart_name, chart_path)
                 except:
                     continue
-    with open("out/noIconList.txt", "w") as file:
+
+    with open("out/NullList/noIconList.txt", "w") as file:
         for line in no_icon_dict:
             if no_icon_dict[line] is 1:
-                file.write(line + "\n")
+                file.write(line.replace(config['path'], '') + "\n")
+
+    os.system('cd {} && git add templates'.format(config['git_path']))
+    git().commit(':lipstick: update icon at {0}, last {1} charts has no icon'.format(
+        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+        len([x for x in no_icon_dict if no_icon_dict[x] is 1]))
+    )
 
 
 if __name__ == '__main__':

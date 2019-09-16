@@ -18,6 +18,8 @@ def init():
     print('initializing env')
     if not os.path.isdir('out'):
         os.mkdir('out')
+    if not os.path.isdir('out/NullList/'):
+        os.mkdir('out/NullList/')
     if not os.path.isdir(config['path']):
         os.mkdir(config['path'])
     if not os.path.isfile('out/domainList.txt') or not os.path.isfile('out/requestFail.txt') or not os.path.isfile(

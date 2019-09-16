@@ -11,56 +11,75 @@ from git import Repo
 from config import config
 import shutil
 
-
-def get_repo():
-    # assert config['git_url'] and config['git_username'] and config[
-    #     'git_password'], 'git is not config complete in config.py'
-
-    git_path = config['git_path'] + '.git'
-    if not os.path.isdir(git_path):
-        os.popen('git config --global credential.helper store')
-
-        print('init git path')
-        repo = Repo.init(config['git_path'])
-        gitignore = "*.tgz\n"
-        with open(config['git_path'] + '.gitignore', 'w') as f:
-            f.write(gitignore)
-        os.mkdir(config['git_path'] + 'templates/')
-
-        origin = repo.create_remote('origin', config['git_url'])
-        origin.fetch()
-        repo.create_head('master', origin.refs.master)
-        repo.heads.master.set_tracking_branch(origin.refs.master)
-    else:
-        repo = Repo(config['git_path'])
-    repo.heads.master.checkout()
-    return repo
+git = None
 
 
-def merge_repo():
-    repo = get_repo()
-    print('copying charts')
-    template_path = config['git_path'] + 'templates/'
+class Git(object):
+    repo = None
 
-    for path in [config['path'] + x for x in os.listdir(config['path']) if os.path.isdir(config['path'] + x)]:
-        for file in ['/' + x for x in os.listdir(path)]:
-            origin_name = path + file
-            file_name = path.replace(config['path'], '') + file
-            target_name = template_path + file_name
-            if not os.path.exists(target_name) and os.path.isdir(origin_name):
-                shutil.copytree(origin_name, target_name)
-            elif not os.path.exists(target_name) and os.path.isfile(origin_name):
-                shutil.copy(origin_name, target_name)
+    def __init__(self):
+        self.repo = self.get_repo()
 
-            repo.index.add(items=['templates/'])
+    def get_repo(self):
+        # assert config['git_url'] and config['git_username'] and config[
+        #     'git_password'], 'git is not config complete in config.py'
 
-            # this function result is wrong
-            if not repo.is_dirty():
-                continue
-            info = 'upload {} at {}'.format(file_name, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-            repo.index.commit(info)
-            print(info)
-            origin = repo.remotes.origin
+        git_path = config['git_path'] + '.git'
+        if not os.path.isdir(git_path):
+            os.popen('git config --global credential.helper store')
+
+            print('init git path')
+            repo = Repo.init(config['git_path'])
+            gitignore = "*.tgz\ntemplates/*.tgz\n"
+            with open(config['git_path'] + '.gitignore', 'w') as f:
+                f.write(gitignore)
+            if not os.path.isdir(config['git_path'] + 'templates/'):
+                os.mkdir(config['git_path'] + 'templates/')
+        else:
+            repo = Repo(config['git_path'])
+
+        if not repo.remotes.origin:
+            origin = repo.create_remote('origin', config['git_url'])
             origin.fetch()
-            origin.push()
-    print('push complete')
+            repo.create_head('master', origin.refs.master)
+            repo.heads.master.set_tracking_branch(origin.refs.master)
+            repo.heads.master.checkout()
+        return repo
+
+    def add(self, path_str=None, path_list=None):
+        """
+        add files to git
+
+        :param path_list:
+        :param path_str:
+        :return: if repo dirty
+        """
+        if path_list:
+            self.repo.index.add(items=path_list, force=False)
+        elif path_str:
+            self.repo.index.add(items=[path_str], force=False)
+        # this function result is wrong
+        return self.repo.is_dirty()
+
+    def commit(self, info_str):
+        print('commit {}'.format(info_str))
+        self.repo.index.commit(message=info_str)
+
+    def push(self):
+        origin = self.repo.remotes.origin
+        origin.fetch()
+        origin.push()
+
+    def tag(self, name_str):
+        return self.repo.create_tag(name_str)
+
+
+def get_git():
+    global git
+    if not git:
+        git = Git()
+    return git
+
+
+def push():
+    return get_git().push()
