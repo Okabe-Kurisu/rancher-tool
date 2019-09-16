@@ -74,10 +74,6 @@ def get_icon(chart_name_str, chart_path_str):
         chart_yaml['icon'] = "file://.." + icon_name
         yaml.dump(chart_yaml, file, Dumper)
 
-        if git().add(path_str=chart_path_str):
-            git().commit(':lipstick: update icon for {} at {}'.
-                         format(chart_path_str, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-
 
 def get_all_icon():
     print("-----------start downloading icon ---------------")
@@ -93,11 +89,15 @@ def get_all_icon():
                 except:
                     continue
 
-    git().tag('origin logo at ' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     with open("out/noIconList.txt", "w") as file:
         for line in no_icon_dict:
             if no_icon_dict[line] is 1:
                 file.write(line.replace(config['path'], '') + "\n")
+    if git().add(path_str=config['path']):
+        git().commit(':lipstick: first update icon at {0}, last {1} cherts has no icon'.format(
+            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+            len([x for x, y in no_icon_dict if y is 1]))
+        )
 
 
 if __name__ == '__main__':

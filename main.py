@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Author  : Xie Chuyu
 # @Software: PyCharm
-from chart import getIcon, getImages, tarThings, getAllCharts, gitOperat
+from chart import getIcon, getImages, tarThings, getAllCharts, gitOperat, categories
 from harbor import dockerThings, harborOperat
 import os
 import sys
@@ -48,6 +48,7 @@ RancherTool version{0}
     --clear             会清空全部带有harbor地址标记的镜像。同id的全删，谨慎使用。
     --skin [project]    会将[project]中多层项目名包裹的image剥离出来
     --git               提交全部commit
+    --gac               为全部项目增加question.yaml文件，并且对项目进行分类
 """.format(version)
 
 
@@ -89,6 +90,8 @@ def start():
             dockerThings.pull_and_push_all()
         elif arg == "--git":
             gitOperat.push()
+        elif arg == "--gac":
+            categories.get_all_keyword()
         elif not arg:
             continue
         else:

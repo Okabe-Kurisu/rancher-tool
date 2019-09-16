@@ -33,7 +33,8 @@ class Git(object):
             gitignore = "*.tgz\n"
             with open(config['git_path'] + '.gitignore', 'w') as f:
                 f.write(gitignore)
-            os.mkdir(config['git_path'] + 'templates/')
+            if not os.path.isdir(config['git_path'] + 'templates/'):
+                os.mkdir(config['git_path'] + 'templates/')
 
             origin = repo.create_remote('origin', config['git_url'])
             origin.fetch()
@@ -56,7 +57,7 @@ class Git(object):
         elif path_str:
             self.repo.index.add(items=[path_str])
         # this function result is wrong
-        return not self.repo.is_dirty()
+        return self.repo.is_dirty()
 
     def commit(self, info_str):
         print('commit {}'.format(info_str))
