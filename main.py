@@ -29,7 +29,7 @@ def init():
         open('out/dockerDomainList.txt', 'w')
 
 
-version = '1.10'
+version = '1.31'
 help_text = """
 RancherTool version{0}
 与rancher相关的小工具合集

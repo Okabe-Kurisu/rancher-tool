@@ -49,7 +49,7 @@ categories = [
     'deploy',
     'stackdriver',
 ]
-no_category_list = []
+no_category_list = {}
 
 
 def read_chart(chart_path):
@@ -59,7 +59,7 @@ def read_chart(chart_path):
         keywords = chart_yaml.get('keywords')
         if not keywords or not list(set(keywords) & set(categories)):
             print(chart_path + 'has no categories')
-            no_category_list.append(chart_path)
+            no_category_list[chart_path] = keywords if keywords else 1
             return
 
         question_yaml_path = chart_path.replace('Chart.yaml', 'questions.yml')
@@ -88,7 +88,7 @@ def get_all_keyword():
 
     with open("out/NullList/noCategoryList.txt", "w") as file:
         for line in no_category_list:
-            file.write(line.replace(config['path'], '') + "\n")
+            file.write(line.replace(config['path'], '') + "\n" + str(no_category_list[line]) + "\n")
 
     os.system('cd {} && git add templates'.format(config['git_path']))
     git().commit(':label: add categories at {}'.
