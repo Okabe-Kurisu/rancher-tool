@@ -30,18 +30,18 @@ class Git(object):
 
             print('init git path')
             repo = Repo.init(config['git_path'])
-            gitignore = "*.tgz\n"
+            gitignore = "*.tgz\ntemplates/*.tgz\n"
             with open(config['git_path'] + '.gitignore', 'w') as f:
                 f.write(gitignore)
             if not os.path.isdir(config['git_path'] + 'templates/'):
                 os.mkdir(config['git_path'] + 'templates/')
-
-            origin = repo.create_remote('origin', config['git_url'])
-            origin.fetch()
-            repo.create_head('master', origin.refs.master)
-            repo.heads.master.set_tracking_branch(origin.refs.master)
         else:
             repo = Repo(config['git_path'])
+
+        origin = repo.create_remote('origin', config['git_url'])
+        origin.fetch()
+        repo.create_head('master', origin.refs.master)
+        repo.heads.master.set_tracking_branch(origin.refs.master)
         repo.heads.master.checkout()
         return repo
 
@@ -49,13 +49,14 @@ class Git(object):
         """
         add files to git
 
+        :param path_list:
         :param path_str:
         :return: if repo dirty
         """
         if path_list:
-            self.repo.index.add(items=path_list)
+            self.repo.index.add(items=path_list, force=False)
         elif path_str:
-            self.repo.index.add(items=[path_str])
+            self.repo.index.add(items=[path_str], force=False)
         # this function result is wrong
         return self.repo.is_dirty()
 

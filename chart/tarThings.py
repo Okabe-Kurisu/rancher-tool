@@ -76,8 +76,8 @@ def find_and_un_tar():
                 or os.path.isdir(config['path'] + file_name):
             continue
         un_tar(config['path'] + file_name)
-    if git().add(path_str=config['path']):
-        git().commit(':tada: First upload at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+    os.system('cd {} && git add templates'.format(config['git_path']))
+    git().commit(':tada: First upload at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
 
 
 if __name__ == '__main__':

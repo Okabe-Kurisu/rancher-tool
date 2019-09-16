@@ -93,11 +93,12 @@ def get_all_icon():
         for line in no_icon_dict:
             if no_icon_dict[line] is 1:
                 file.write(line.replace(config['path'], '') + "\n")
-    if git().add(path_str=config['path']):
-        git().commit(':lipstick: first update icon at {0}, last {1} cherts has no icon'.format(
-            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-            len([x for x, y in no_icon_dict if y is 1]))
-        )
+
+    os.system('cd {} && git add templates'.format(config['git_path']))
+    git().commit(':lipstick: update icon at {0}, last {1} cherts has no icon'.format(
+        time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+        len([x for x in no_icon_dict if no_icon_dict[x] is 1]))
+    )
 
 
 if __name__ == '__main__':
