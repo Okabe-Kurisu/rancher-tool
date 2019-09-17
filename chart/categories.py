@@ -12,38 +12,37 @@ from chart.gitOperat import get_git as git
 import time
 
 type_dict = {
-    'Application': ['elasticsearch', 'phpbb', 'mercure', 'osclass', 'blog', 'game', 'moodle', 'e-commerce',
-                    'home-assistant', 'human resources', 'reporting'],
+    'Solution': ['phpbb', 'mercure', 'osclass', 'blog', 'game', 'moodle', 'e-commerce',
+                 'home-assistant', 'human resources', 'reporting'],
     'WebIDE': ['nodered'],
     'Mobile': [],
     'Spider': [],
-    'DataBase': ['database', 'sql', 'quality', 'sqlproxy', 'mariadb', 'mysqldump', 'hazelcast', 'percona', 'mysql',
-                 'keyvalue', 'mongodb', 'postgresql', 'nosql', 'replication', 'redis'],
-    'Cloud': ['cluster', 'metallb', 'envoy', 'opa', 'aws', 'distributed', 'zookeeper', 'kubernetes deployment',
-              'serverless',
-              'kube-lego',
-              'stackdriver'],
+    'DataBase': ['database', 'fluentd', 'sql', 'quality', 'sqlproxy', 'mariadb', 'mysqldump', 'hazelcast',
+                 'percona', 'mysql', 'keyvalue', 'mongodb', 'postgresql', 'nosql', 'replication', 'redis'],
+    'Cloud': ['cluster', 'metallb', 'terraform', 'envoy', 'opa', 'aws', 'distributed', 'zookeeper',
+              'kubernetes deployment', 'serverless', 'kube-lego', 'stackdriver'],
     'BlockChain': ['blockchain', 'hyperledger', 'ethereum', 'fabric', 'openiban'],
-    'Contain': ['kubernetes', 'k8s-spot-rescheduler', 'metallb', 'kubernetes deployment', 'kube-lego', 'docker',
-                'helm release',
-                'helm-exporter', 'cluster-autoscaler'],
-    'BigData': ['timeseries', 'big-data', 'hadoop', 'elasticsearch', 'spark'],
-    'Workflow': ['jenkins', 'workflow', 'terraform', 'jfrog', 'ci', 'testing', 'drone', 'ci/cd'],
+    'Container': ['kubernetes', 'k8s', 'metallb', 'kube', 'docker',
+                  'helm release', 'helm-exporter', 'cluster-autoscaler'],
+    'BigData': ['elasticsearch', 'timeseries', 'big-data', 'hadoop', 'elasticsearch', 'spark'],
+    'CI/CD': ['jenkins', 'workflow', 'jfrog', 'ci', 'drone', 'ci/cd'],
     'Auth': ['authentication', 'sso', 'oidc', 'oauth', 'oauth2', 'iam', 'ldap', 'openid connect'],
-    'MQ': ['rabbitmq', 'dns', 'nats', 'message queue'],
-    'Middleware': ['cache', 'kafka', 'zookeeper', 'centrifugo', 'event'],
-    'ProjectManage': ['jenkins', 'wiki', 'crm', 'qa', 'chaos-engineering', 'task management', 'issue tracker',
-                      'project management', 'cms', 'code review', 'troubleshooting'],
+    'MQ': ['rabbitmq', 'dns', 'nats', 'message queue', 'kafka', 'redis'],
+    'Middleware': ['cache', 'zookeeper', 'centrifugo'],
+    'ProjectManage': ['jenkins', 'wiki', 'crm', 'task management', 'issue tracker',
+                      'project management', 'cms', 'troubleshooting'],
+    'QA': ['jenkins', 'qa', 'code review', 'testing', 'drone'],
     'Network': ['proxy', 'nginx', 'ingress', 'network'],
-    'Monitoring': ['monitoring', 'prometheus-operator', 'fluentd', 'couchdb-exporter', 'hpa', 'pushgateway', 'syslog',
-                   'sensu', 'observability', 'logs', 'stackdriver',
-                   'metrics', 'logging', 'metric', 'alerting'],
+    'Monitoring': ['monitoring', 'prometheus-operator', 'event', 'exporter', 'hpa', 'pushgateway',
+                   'sensu', 'observability', 'stackdriver', 'metrics', 'metric', 'alerting'],
+    'Logging': ['syslog', 'logs', 'logging', ],
     'Security': ['security', 'letsencrypt', 'kube-lego'],
     'Storage': ['storage', 'nfs', 'ipfs', 'object-storage', ],
     'Teamwork': ['slack', 'smtp', 'chat', 'quassel', 'mail', 'mattermost', 'email', 'pop3']
 }
-wait_check = ['http', 'web', 'event', 'operator', 'dashboard', 'php', 'exporter', 'git', 'nodejs']
+type_dict['Middleware'].extend(type_dict['MQ'])
 
+wait_check = []
 no_category_list = {}
 
 

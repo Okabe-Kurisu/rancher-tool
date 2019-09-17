@@ -26,7 +26,7 @@ def get_icon(chart_name_str, chart_path_str):
     # check if icon has been put by human
     for file_name in os.listdir(chart_path_str):
         if file_name.startswith('icon.'):
-            icon_name = file_name
+            icon_name = '/' + file_name
 
     with open(chart_name_str, encoding='utf-8') as chart:
         chart_yaml = yaml.load(stream=chart, Loader=Loader)
@@ -87,7 +87,8 @@ def get_all_icon():
             if os.path.isfile(chart_name):
                 try:
                     get_icon(chart_name, chart_path)
-                except:
+                except Exception as e:
+                    raise e
                     continue
 
     with open("out/NullList/noIconList.txt", "w") as file:
