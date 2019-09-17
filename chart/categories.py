@@ -61,7 +61,7 @@ def classify(chart_path):
                 for TYPE in type_dict[line]:
                     keyword_lower = keyword.lower()
                     if keyword_lower == TYPE or keyword_lower in TYPE or TYPE in keyword_lower:
-                        categories.add(line + '-' + TYPE)
+                        categories.add(line)
                         break
 
         if categories:

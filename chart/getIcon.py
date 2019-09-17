@@ -22,21 +22,6 @@ def get_icon(chart_name_str, chart_path_str):
         chart_yaml = yaml.load(stream=chart, Loader=Loader)
         img_url = chart_yaml.get("icon")
 
-    if not img_url:
-        print(chart_path_str + ' is no logo, pass it')
-        if chart_path_str not in no_icon_dict or no_icon_dict[chart_path_str] is not 0:
-            no_icon_dict[chart_path_str] = 1
-            return
-    # github's icon cannot get from the url
-    elif img_url.startswith('https://github.com'):
-        img_url = img_url \
-            .replace('/blob/', '/raw/')
-    # if this logo is exist, pass it
-    elif img_url.startswith('file://'):
-        print("this logo has already exist, pass it")
-        no_icon_dict[chart_path_str] = 0
-        return
-
     headers = {
         'user-agent': fakeUA.random_UA()
     }
@@ -50,6 +35,21 @@ def get_icon(chart_name_str, chart_path_str):
     for file_name in os.listdir(chart_path_str):
         if file_name.startswith('icon.'):
             icon_name = file_name
+
+    if not img_url and not icon_name:
+        print(chart_path_str + ' is no logo, pass it')
+        if chart_path_str not in no_icon_dict or no_icon_dict[chart_path_str] is not 0:
+            no_icon_dict[chart_path_str] = 1
+            return
+    # github's icon cannot get from the url
+    elif img_url.startswith('https://github.com'):
+        img_url = img_url \
+            .replace('/blob/', '/raw/')
+    # if this logo is exist, pass it
+    elif img_url.startswith('file://'):
+        print("this logo has already exist, pass it")
+        no_icon_dict[chart_path_str] = 0
+        return
 
     # if logo has been download once or download success, make chart.yaml icon locally. if download fail, return
     if not os.path.exists(chart_path_str + icon_name):
