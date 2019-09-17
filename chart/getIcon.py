@@ -14,65 +14,66 @@ import time
 
 # if value is 0 mean this dir has logo, else no
 no_icon_dict = {}
+headers = {
+    'user-agent': fakeUA.random_UA()
+}
 
 
 def get_icon(chart_name_str, chart_path_str):
     print("downloading " + chart_path_str + "'s logo")
-    with open(chart_name_str, encoding='utf-8') as chart:
-        chart_yaml = yaml.load(stream=chart, Loader=Loader)
-        img_url = chart_yaml.get("icon")
 
-    headers = {
-        'user-agent': fakeUA.random_UA()
-    }
-    ext_name = img_url.split(".")[-1]
-    if len(ext_name) < 5:
-        icon_name = "/icon." + ext_name
-    else:
-        icon_name = "/icon.png"
-
+    icon_name = ''
     # check if icon has been put by human
     for file_name in os.listdir(chart_path_str):
         if file_name.startswith('icon.'):
             icon_name = file_name
 
-    if not img_url and not icon_name:
-        print(chart_path_str + ' is no logo, pass it')
-        if chart_path_str not in no_icon_dict or no_icon_dict[chart_path_str] is not 0:
-            no_icon_dict[chart_path_str] = 1
-            return
-    # github's icon cannot get from the url
-    elif img_url.startswith('https://github.com'):
-        img_url = img_url \
-            .replace('/blob/', '/raw/')
-    # if this logo is exist, pass it
-    elif img_url.startswith('file://'):
-        print("this logo has already exist, pass it")
-        no_icon_dict[chart_path_str] = 0
-        return
+    with open(chart_name_str, encoding='utf-8') as chart:
+        chart_yaml = yaml.load(stream=chart, Loader=Loader)
+        if icon_name:
+            print("this logo has already exist, pass it")
+        else:
+            img_url = chart_yaml.get("icon")
 
-    # if logo has been download once or download success, make chart.yaml icon locally. if download fail, return
-    if not os.path.exists(chart_path_str + icon_name):
-        print("trying to download logo from:" + img_url)
-        img_response = auto_retry_get(img_url, headers=headers, timeout=5, retry_time=3)
+            if not img_url:
+                print(chart_path_str + ' is no logo, pass it')
+                if chart_path_str not in no_icon_dict or no_icon_dict[chart_path_str] is not 0:
+                    no_icon_dict[chart_path_str] = 1
+                    return
+            # github's icon cannot get from the url
+            elif img_url.startswith('https://github.com'):
+                img_url = img_url \
+                    .replace('/blob/', '/raw/')
+            # if this logo is exist, pass it
+            elif img_url.startswith('file://'):
+                print("this logo has already exist, pass it")
+                no_icon_dict[chart_path_str] = 0
+                return
 
-        if img_response and img_response.headers['Content-Type'] != "text/html; charset=utf-8":
-            with open(chart_path_str + icon_name, "wb") as f:
-                f.write(img_response.content)
-            print(chart_path_str + "'s logo has been downloaded already")
-        elif chart_path_str not in no_icon_dict or no_icon_dict[chart_path_str] is not 0:
-            no_icon_dict[chart_path_str] = 1
-            print(chart_path_str + "'s logo downloaded fail")
-            return
-    else:
-        print("this logo has already exist, pass it")
+            ext_name = img_url.split(".")[-1] if img_url else ''
+            if len(ext_name) < 5:
+                icon_name = "/icon." + ext_name
+            else:
+                icon_name = "/icon.png"
 
-    with open(chart_name_str, 'w', encoding="utf-8") as file:
-        no_icon_dict[chart_path_str] = 0
+            print("trying to download logo from:" + img_url)
+            img_response = auto_retry_get(img_url, headers=headers, timeout=5, retry_time=3)
 
-        # make yaml's icon from web url to local url
-        chart_yaml['icon'] = "file://.." + icon_name
-        yaml.dump(chart_yaml, file, Dumper)
+            if img_response and img_response.headers['Content-Type'] != "text/html; charset=utf-8":
+                with open(chart_path_str + icon_name, "wb") as f:
+                    f.write(img_response.content)
+                print(chart_path_str + "'s logo has been downloaded already")
+            elif chart_path_str not in no_icon_dict or no_icon_dict[chart_path_str] is not 0:
+                no_icon_dict[chart_path_str] = 1
+                print(chart_path_str + "'s logo downloaded fail")
+                return
+
+        with open(chart_name_str, 'w', encoding="utf-8") as file:
+            no_icon_dict[chart_path_str] = 0
+
+            # make yaml's icon from web url to local url
+            chart_yaml['icon'] = "file://.." + icon_name
+            yaml.dump(chart_yaml, file, Dumper)
 
 
 def get_all_icon():
