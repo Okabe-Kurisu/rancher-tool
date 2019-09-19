@@ -12,9 +12,13 @@ config = {
 
     # file path
     'path': "./pkg/",
-    'git_path': "./git/",
 
+    'git_path': "./git/",
     'git_url': "",
+
+    # helm-stable-lightly git config
+    'son_git_path': "",
+    'son_git_url': "",
 
     # harbor config
     'harbor_url': "127.0.0.1",
