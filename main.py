@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 # @Author  : Xie Chuyu
 # @Software: PyCharm
+import time
+
 from chart import getIcon, getImages, tarThings, getAllCharts, categories, loadOnDemand
-from utils import gitOperat
+from utils.gitOperat import get_git as git
 from harbor import dockerThings, harborOperat
 import os
 import sys
@@ -72,16 +74,19 @@ def start():
     elif "--clear" in args:
         return dockerThings.clear_trash()
     elif "--tran" in args:
+        son_git = git(git_path=config['son_git_path'])
         if len(args) == 2:
-            return loadOnDemand.copy_chart(name=args[-1])
+            loadOnDemand.copy_chart(name=args[-1])
         elif len(args) == 3:
-            return loadOnDemand.copy_chart(name=args[-2], version=args[-1])
+            loadOnDemand.copy_chart(name=args[-2], version=args[-1])
         elif len(args) == 1:
             return loadOnDemand.init()
         else:
             for x in args[1:]:
                 loadOnDemand.copy_chart(name=x)
-            return
+        son_git.add(path_str=config['son_git_path'] + 'templates/')
+        son_git.commit(':tada: First upload at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+        return son_git.push(config['son_git_url'])
 
     init()
     for arg in args:
@@ -96,7 +101,7 @@ def start():
         elif arg == "--ppa":
             dockerThings.pull_and_push_all()
         elif arg == "--git":
-            gitOperat.push()
+            git().push(config['git_url'])
         elif arg == "--gac":
             categories.get_all_keyword()
         elif not arg:

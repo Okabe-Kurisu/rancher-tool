@@ -25,13 +25,7 @@ def init():
         os.mkdir(son_templates_path)
 
     for filename in [x for x in os.listdir(config['path']) if os.path.isdir(config['path'] + x)]:
-        print('copying the last version from the helm stable')
         copy_chart(filename)
-
-    son_git = git(config['son_git_path'])
-    print(config['son_git_path'] + 'templates/')
-    son_git.add(path_str=config['son_git_path'] + 'templates/')
-    son_git.commit(':tada: First upload at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
 
 
 def copy_chart(name, version='latest'):
@@ -42,6 +36,7 @@ def copy_chart(name, version='latest'):
     :param version:
     :return:
     """
+    print("copying the {}'s {} from the helm stable".format(name, version))
     assert os.path.exists(config['path'] + name), '目标chart{}不存在，检查输入或者更新helm stable目录'.format(name)
     latest, icon = pick_latest_version(config['path'] + name)
     target_version = latest if version == 'latest' else version

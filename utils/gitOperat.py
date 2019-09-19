@@ -25,10 +25,11 @@ class Git(object):
     def get_repo(self):
         dot_git_path = self.git_path + '.git'
         if not os.path.isdir(dot_git_path):
-            os.popen('git config --global credential.helper store')
+            os.popen('git config credential.helper store')
 
             print('init git path')
             repo = Repo.init(self.git_path)
+            repo.create_head('master')
             gitignore = "*.tgz\ntemplates/*.tgz\n"
             with open(config['git_path'] + '.gitignore', 'w') as f:
                 f.write(gitignore)
@@ -58,10 +59,14 @@ class Git(object):
         print('commit {}'.format(info_str))
         self.repo.index.commit(message=info_str)
 
-    def push(self):
-        origin = self.repo.remotes.origin
-        origin.fetch()
-        origin.push()
+    def push(self, target):
+        if not self.repo.remotes:
+            self.repo.create_remote(name='target', url=target)
+        target = self.repo.remotes.target
+
+        target.fetch()
+        target.push(self.repo.heads.master)
+        print('push to {} success'.format(target))
 
     def tag(self, name_str):
         return self.repo.create_tag(name_str)
@@ -73,6 +78,3 @@ def get_git(git_path=config['git_path']):
         git = Git(git_path)
     return git
 
-
-def push():
-    return get_git().push()
