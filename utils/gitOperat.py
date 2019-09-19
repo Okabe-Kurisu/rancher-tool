@@ -16,34 +16,27 @@ git = None
 
 class Git(object):
     repo = None
+    git_path = None
 
-    def __init__(self):
+    def __init__(self, git_path):
+        self.git_path = git_path
         self.repo = self.get_repo()
 
     def get_repo(self):
-        # assert config['git_url'] and config['git_username'] and config[
-        #     'git_password'], 'git is not config complete in config.py'
-
-        git_path = config['git_path'] + '.git'
-        if not os.path.isdir(git_path):
+        dot_git_path = self.git_path + '.git'
+        if not os.path.isdir(dot_git_path):
             os.popen('git config --global credential.helper store')
 
             print('init git path')
-            repo = Repo.init(config['git_path'])
+            repo = Repo.init(self.git_path)
             gitignore = "*.tgz\ntemplates/*.tgz\n"
             with open(config['git_path'] + '.gitignore', 'w') as f:
                 f.write(gitignore)
-            if not os.path.isdir(config['git_path'] + 'templates/'):
-                os.mkdir(config['git_path'] + 'templates/')
+            if not os.path.isdir(self.git_path + 'templates/'):
+                os.mkdir('templates/')
         else:
-            repo = Repo(config['git_path'])
+            repo = Repo(self.git_path)
 
-        if not repo.remotes.origin:
-            origin = repo.create_remote('origin', config['git_url'])
-            origin.fetch()
-            repo.create_head('master', origin.refs.master)
-            repo.heads.master.set_tracking_branch(origin.refs.master)
-            repo.heads.master.checkout()
         return repo
 
     def add(self, path_str=None, path_list=None):
@@ -74,10 +67,10 @@ class Git(object):
         return self.repo.create_tag(name_str)
 
 
-def get_git():
+def get_git(git_path=config['git_path']):
     global git
     if not git:
-        git = Git()
+        git = Git(git_path)
     return git
 
 

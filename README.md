@@ -42,6 +42,8 @@ pip install -r requirements.txt
 |path|str|下载的chart包所在的路径，默认存储在当前文件夹的`pkg`目录下|
 |git_path|str|要生成的git repo所在的路径，如果这个文件夹不存在会自动创建|
 |git_url|str|远程仓库的地址|
+|son_git_path|str|默认只保留每一个chart的最新版本的仓库，可以按需从`git_path`中拉取|
+|son_git_url|str|默认只保留每一个chart的最新版本的仓库，可以按需从`git_path`中拉取|
 |git_username|str|远程仓库的账号|
 |git_password|str|远程仓库的密码|
 |harbor_url|str|harbor的域名，不要加协议|
@@ -68,11 +70,11 @@ flag列表如下：
 |gaicon|得到全部应用的图标|
 |ppa|从out/image.txt中逐个拉取镜像，并且推送到harbor中|
 |config|输出全部配置信息|
-|init|顺序执行从获取chart列表到推送镜像到harbor之间的全部动作，耗时及其长，不建议使用|
 |clear|会清空全部带有harbor地址标记的镜像。同id的全删，谨慎使用。|
 |skin [project]|会将[project]中多层项目名包裹的image剥离出来|
-|git|提交全部commit|
+|git|提交helm-stable仓的全部commit
+|gac|为全部项目增加question.yaml文件，并且对项目进行分类|
+|tran [name] [ver]|将helm-stable中名为[name]版本为[ver]的chart移动到helm-stable-lightly中并提交，如果不输入版本号，则默认为最新的版本，如果输入的参数超过三个，就会将参数全部视为目标chart名称，版本号全部使用最新版本。如果不填写参数，则会将helm-stable中全部项目的最新版本创建到配置文件中的son_git_path路径，并在路径中初始化git仓|
 
 部分flag拥有阻止其他flag生效的作用，其优先级如下所示：
-```help > init > skin > config > clear```
-
+```help > skin > config > clear>tran```
