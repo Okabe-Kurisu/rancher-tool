@@ -6,18 +6,8 @@ import os
 import shutil
 import tarfile
 from config import config
-
-
-def tar():
-    """
-    todo after all, every pkg should be tar and push to gitlab
-
-    :return:
-    """
-    tar_file = config['path'] + 'tar/'
-    if not os.path.isdir(tar_file):
-        os.mkdir(tar_file)
-    pass
+from utils.gitOperat import get_git as git
+import time
 
 
 def un_tar(file_name_str):

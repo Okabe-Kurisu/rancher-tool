@@ -16,34 +16,28 @@ git = None
 
 class Git(object):
     repo = None
+    git_path = None
 
-    def __init__(self):
+    def __init__(self, git_path):
+        self.git_path = git_path
         self.repo = self.get_repo()
 
     def get_repo(self):
-        # assert config['git_url'] and config['git_username'] and config[
-        #     'git_password'], 'git is not config complete in config.py'
-
-        git_path = config['git_path'] + '.git'
-        if not os.path.isdir(git_path):
-            os.popen('git config --global credential.helper store')
+        dot_git_path = self.git_path + '.git'
+        if not os.path.isdir(dot_git_path):
+            os.popen('git config credential.helper store')
 
             print('init git path')
-            repo = Repo.init(config['git_path'])
+            repo = Repo.init(self.git_path)
+            repo.create_head('master')
             gitignore = "*.tgz\ntemplates/*.tgz\n"
             with open(config['git_path'] + '.gitignore', 'w') as f:
                 f.write(gitignore)
-            if not os.path.isdir(config['git_path'] + 'templates/'):
-                os.mkdir(config['git_path'] + 'templates/')
+            if not os.path.isdir(self.git_path + 'templates/'):
+                os.mkdir('templates/')
         else:
-            repo = Repo(config['git_path'])
+            repo = Repo(self.git_path)
 
-        if not repo.remotes.origin:
-            origin = repo.create_remote('origin', config['git_url'])
-            origin.fetch()
-            repo.create_head('master', origin.refs.master)
-            repo.heads.master.set_tracking_branch(origin.refs.master)
-            repo.heads.master.checkout()
         return repo
 
     def add(self, path_str=None, path_list=None):
@@ -65,21 +59,22 @@ class Git(object):
         print('commit {}'.format(info_str))
         self.repo.index.commit(message=info_str)
 
-    def push(self):
-        origin = self.repo.remotes.origin
-        origin.fetch()
-        origin.push()
+    def push(self, target):
+        if not self.repo.remotes:
+            self.repo.create_remote(name='target', url=target)
+        target = self.repo.remotes.target
+
+        target.fetch()
+        target.push(self.repo.heads.master)
+        print('push to {} success'.format(target))
 
     def tag(self, name_str):
         return self.repo.create_tag(name_str)
 
 
-def get_git():
+def get_git(git_path=config['git_path']):
     global git
     if not git:
-        git = Git()
+        git = Git(git_path)
     return git
 
-
-def push():
-    return get_git().push()

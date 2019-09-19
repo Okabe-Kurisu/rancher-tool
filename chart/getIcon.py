@@ -9,7 +9,7 @@ from utils.request import auto_retry_get
 from utils import fakeUA
 from yaml import Loader, Dumper
 from config import config
-from chart.gitOperat import get_git as git
+from utils.gitOperat import get_git as git
 import time
 
 # if value is 0 mean this dir has logo, else no
