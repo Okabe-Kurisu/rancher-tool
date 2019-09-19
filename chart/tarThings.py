@@ -6,7 +6,7 @@ import os
 import shutil
 import tarfile
 from config import config
-from chart.gitOperat import get_git as git
+from utils.gitOperat import get_git as git
 import time
 
 

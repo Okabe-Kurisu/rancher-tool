@@ -8,7 +8,7 @@ import yaml
 import os
 from config import config
 from yaml import Loader, Dumper
-from chart.gitOperat import get_git as git
+from utils.gitOperat import get_git as git
 import time
 
 type_dict = {

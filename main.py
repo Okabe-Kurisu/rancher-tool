@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author  : Xie Chuyu
 # @Software: PyCharm
-from chart import getIcon, getImages, tarThings, getAllCharts, gitOperat, categories
+from chart import getIcon, getImages, tarThings, getAllCharts, categories
+from utils import gitOperat
 from harbor import dockerThings, harborOperat
 import os
 import sys
@@ -29,7 +30,7 @@ def init():
         open('out/dockerDomainList.txt', 'w')
 
 
-version = '1.31'
+version = '1.40'
 help_text = """
 RancherTool version{0}
 与rancher相关的小工具合集
