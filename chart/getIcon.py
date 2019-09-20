@@ -4,12 +4,13 @@
 # @Software: PyCharm
 import os
 import yaml
+
+from utils.gitOperat import Git
 from utils.request import auto_retry_get
 
 from utils import fakeUA
 from yaml import Loader, Dumper
 from config import config
-from utils.gitOperat import get_git as git
 import time
 
 # if value is 0 mean this dir has logo, else no
@@ -97,7 +98,7 @@ def get_all_icon():
                 file.write(line.replace(config['path'], '') + "\n")
 
     os.system('cd {} && git add templates'.format(config['git_path']))
-    git().commit(':lipstick: update icon at {0}, last {1} charts has no icon'.format(
+    Git().commit(':lipstick: update icon at {0}, last {1} charts has no icon'.format(
         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
         len([x for x in no_icon_dict if no_icon_dict[x] is 1]))
     )

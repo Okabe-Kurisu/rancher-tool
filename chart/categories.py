@@ -8,8 +8,9 @@ import yaml
 import os
 from config import config
 from yaml import Loader, Dumper
-from utils.gitOperat import get_git as git
 import time
+
+from utils.gitOperat import Git
 
 type_dict = {
     'Solution': ['phpbb', 'mercure', 'osclass', 'blog', 'game', 'moodle', 'e-commerce',
@@ -118,7 +119,7 @@ def get_all_keyword():
                 file.write(line.replace(config['path'], '') + "\n" + str(no_category_list[line]) + "\n")
 
     os.system('cd {} && git add templates'.format(config['git_path']))
-    git().commit(':label: add categories at {}'.
+    Git().commit(':label: add categories at {}'.
                  format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
                  )
 

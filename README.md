@@ -50,6 +50,7 @@ pip install -r requirements.txt
 |harbor_tls|boolean|harbor是否开启了tls|
 |harbor_username|str|harbor的管理员账号|
 |harbor_password|str|harbor的管理员密码|
+|wait_sync|dict|需要同步的git仓库，key是原地址，value是目标地址|
 
 
 
@@ -75,6 +76,7 @@ flag列表如下：
 |git|提交helm-stable仓的全部commit
 |gac|为全部项目增加question.yaml文件，并且对项目进行分类|
 |tran [name] [ver]|将helm-stable中名为[name]版本为[ver]的chart移动到helm-stable-lightly中并提交，如果不输入版本号，则默认为最新的版本，如果输入的参数超过三个，就会将参数全部视为目标chart名称，版本号全部使用最新版本。如果不填写参数，则会将helm-stable中全部项目的最新版本创建到配置文件中的son_git_path路径，并在路径中初始化git仓|
+|sync|同步设置中全部git|
 
 部分flag拥有阻止其他flag生效的作用，其优先级如下所示：
 ```help > skin > config > clear>tran```

@@ -5,11 +5,12 @@
 import time
 
 from chart import getIcon, getImages, tarThings, getAllCharts, categories, loadOnDemand
-from utils.gitOperat import get_git as git
 from harbor import dockerThings, harborOperat
 import os
 import sys
 from config import config
+from rancher import source
+from utils.gitOperat import Git
 
 
 def init():
@@ -31,7 +32,7 @@ def init():
         open('out/dockerDomainList.txt', 'w')
 
 
-version = '1.40'
+version = '1.41'
 help_text = """
 RancherTool version{0}
 与rancher相关的小工具合集
@@ -59,6 +60,7 @@ RancherTool version{0}
     的参数超过三个，就会将参数全部视为目标chart名称，版本号全部使用最新版本。如果不
     填写参数，则会将helm-stable中全部项目的最新版本创建到配置文件中的son_git_path
     路径，并在路径中初始化git仓
+    --sync              同步所有需要同步的代码仓
 """.format(version)
 
 
@@ -74,7 +76,7 @@ def start():
     elif "--clear" in args:
         return dockerThings.clear_trash()
     elif "--tran" in args:
-        son_git = git(git_path=config['son_git_path'])
+        son_git = Git(git_path=config['son_git_path'])
         if len(args) == 2:
             loadOnDemand.copy_chart(name=args[-1])
         elif len(args) == 3:
@@ -86,7 +88,7 @@ def start():
                 loadOnDemand.copy_chart(name=x)
         son_git.add(path_str=config['son_git_path'] + 'templates/')
         son_git.commit(':tada: First upload at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        return son_git.push(config['son_git_url'])
+        return son_git.push('target', config['son_git_url'])
 
     init()
     for arg in args:
@@ -101,9 +103,11 @@ def start():
         elif arg == "--ppa":
             dockerThings.pull_and_push_all()
         elif arg == "--git":
-            git().push(config['git_url'])
+            Git().push('master', config['git_url'])
         elif arg == "--gac":
             categories.get_all_keyword()
+        elif arg == "--sync":
+            source.sync_all()
         elif not arg:
             continue
         else:

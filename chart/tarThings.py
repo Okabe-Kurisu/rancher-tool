@@ -6,8 +6,9 @@ import os
 import shutil
 import tarfile
 from config import config
-from utils.gitOperat import get_git as git
 import time
+
+from utils.gitOperat import Git
 
 
 def un_tar(file_name_str):
@@ -35,6 +36,10 @@ def un_tar(file_name_str):
         os.mkdir(name)
     if not os.path.isdir(pkg_name):
         os.mkdir(pkg_name)
+    else:
+        tar_obj.close()
+        return
+
     for tar_name in tar_obj.getnames():
         tar_obj.extract(tar_name, pkg_name + "/")
     tar_obj.close()
@@ -61,12 +66,19 @@ def format_pkg(pkg_name_str, name_str):
 
 def find_and_un_tar():
     print("-----------start unpack tar or tgz ---------------")
-    for file_name in os.listdir(config['path']):
+    file_name_list = os.listdir(config['path'])
+    i, length = 0, len(file_name_list)
+    for file_name in file_name_list:
+        i += 1
+        print('less {}/{} to untar'.format(i, length))
+
         # if it not a tar file, ignore it
         if not (file_name.endswith("tgz") or file_name.endswith("tar")) \
                 or os.path.isdir(config['path'] + file_name):
             continue
         un_tar(config['path'] + file_name)
+    os.system('cd {} && git add templates'.format(config['git_path']))
+    Git().commit(':tada: First upload at {}'.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
 
 
 if __name__ == '__main__':

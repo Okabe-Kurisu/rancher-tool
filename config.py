@@ -25,4 +25,8 @@ config = {
     'harbor_tls': True,
     'harbor_username': 'admin',
     'harbor_password': 'admin',
+
+    # sync source
+    'wait_sync': {},
+
 }

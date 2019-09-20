@@ -6,10 +6,7 @@
 # @Software: PyCharm
 import os
 import shutil
-import time
-
 from config import config
-from utils.gitOperat import get_git as git
 
 son_templates_path = config['son_git_path'] + 'templates/'
 
